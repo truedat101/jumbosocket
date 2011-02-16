@@ -1,0 +1,188 @@
+.left {
+	float:left;
+}
+.right {
+	float:right;
+}
+ul.footernav {
+	margin:0px;
+	padding:0px;
+}
+ul.footernav li {
+	float:left;
+	list-style:none;
+	width:25%;
+	height:63px;
+}
+ul.footernav li.link4 {
+	width:31%;
+	background:url('../images/css/start-stop-bg.gif') top left;
+}
+ul.footernav li a {
+	text-align:center;
+	display:block;
+	width:100%;
+	height:63px;
+}
+ul.footernav li.active {
+	background-position:left -63px;
+}
+.footercopy {
+	clear:both;
+	color:#aaaeb2;
+	text-align:right;
+	background:#000000;
+	height:29px;
+	width:100%;
+	font-size:11px;
+}
+.footercopy p{
+	padding:10px;
+}
+ul.footernav .ui-btn-corner-all{-moz-border-radius:0em;-webkit-border-radius:0em;border-radius:0em;}
+li.active a { border: 1px solid #000; background: #444444; font-weight: bold; color: #fff;  text-shadow: 0 -1px 1px #000; text-decoration: none; background-image: -moz-linear-gradient(top, #666666, #444444); background-image: -webkit-gradient(linear,left top,left bottom,color-stop(0, #666666),color-stop(1, #444444));   -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#666666', EndColorStr='#444444')";   }
+li.link4 a.ui-btn-up-a { border: 1px solid #222; background: #333333; font-weight: bold; color: #fff; cursor: pointer;  text-shadow: 0 -1px 1px #000; text-decoration: none; background-image: -moz-linear-gradient(top, #175fb4, #013d85); background-image: -webkit-gradient(linear,left top,left bottom,color-stop(0, #175fb4),color-stop(1, #013d85));   -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#175fb4', EndColorStr='#013d85')"; }
+li.link4 a.ui-btn-hover-a { border: 1px solid #000; background: #444444; font-weight: bold; color: #fff;  text-shadow: 0 -1px 1px #000; text-decoration: none; background-image: -moz-linear-gradient(top, #1b68c2, #01479a); background-image: -webkit-gradient(linear,left top,left bottom,color-stop(0, #1b68c2),color-stop(1, #01479a));   -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#1b68c2', EndColorStr='#01479a')";   }
+
+span#html {
+	background:url('../images/css/mimetypes/html.png') no-repeat;
+}
+
+span#htm {
+	background:url('../images/css/mimetypes/html.png') no-repeat;
+}
+
+span#txt {
+	background:url('../images/css/mimetypes/txt.png') no-repeat;
+}
+
+span#pdf {
+	background:url('../images/css/mimetypes/pdf.png') no-repeat;
+}
+
+span#ppt {
+	background:url('../images/css/mimetypes/pps.png') no-repeat;
+}
+
+span#jpg {
+	background:url('../images/css/mimetypes/image2.png') no-repeat;
+}
+
+span#mp4 {
+	background:url('../images/css/mimetypes/video.png') no-repeat;
+}
+
+span#mp3 {
+	background:url('../images/css/mimetypes/sound.png') no-repeat;
+}
+
+span#flv {
+	background:url('../images/css/mimetypes/video.png') no-repeat;
+}
+
+span#3gp {
+	background:url('../images/css/mimetypes/video.png') no-repeat;
+}
+
+span#3gpp {
+	background:url('../images/css/mimetypes/video.png') no-repeat;
+}
+
+span#wav {
+	background:url('../images/css/mimetypes/sound.png') no-repeat;
+}
+
+span#apk {
+	background:url('../images/css/mimetypes/apk.png') no-repeat;
+}
+
+span#py {
+	background:url('../images/css/mimetypes/source_py.png') no-repeat;
+}
+
+#ci-template {
+	display: none;
+}
+
+#branding {
+	width:300px; /* Play with this value to ensure branding doesn't wrap */
+	float:left;
+}
+
+#branding h1 {
+	margin:0px;
+	padding:0px;
+}
+
+.start {float:right;height:65px;width:80px;border: 1px solid #222; background: #333333; font-weight: bold; color: #fff; cursor: pointer;  text-shadow: 0 -1px 1px #000; text-decoration: none; background-image: -moz-linear-gradient(top, #175fb4, #013d85); background-image: -webkit-gradient(linear,left top,left bottom,color-stop(0, #175fb4),color-stop(1, #013d85));   -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#175fb4', EndColorStr='#013d85')"; }
+.stop {float:right;height:65px;width:80px;border: 1px solid #000; background: #444444; font-weight: bold; color: #fff;  text-shadow: 0 -1px 1px #000; text-decoration: none; background-image: -moz-linear-gradient(top, #1b68c2, #01479a); background-image: -webkit-gradient(linear,left top,left bottom,color-stop(0, #1b68c2),color-stop(1, #01479a));   -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#1b68c2', EndColorStr='#01479a')"; }
+
+.reset {display:none;}
+
+.stopwatch {
+	width:220px;
+	padding:0px;
+	color:#5e6264;
+	font-size:1.0em;
+	font-weight:bold;
+	text-align:center;
+	font-family:verdana;
+	float:right;
+	background:url('../images/css/timer-bg.png') no-repeat center left;
+}
+.stopwatch .display {
+	float:left;
+	padding:25px 0px 0px 40px;
+}
+
+#session {
+	width:220px;
+	height:65px;
+	float:right;
+}
+
+.msg {
+	clear:both;
+	padding:10px 0px;
+}
+
+.ts {
+	float:right;
+	color:#afaeae;
+}
+
+.user, .msgcon {
+	float:left;
+}
+
+.user {
+	font-weight:bold;
+}
+
+.msgcon {
+	padding-left:10px;
+	width:80%;
+}
+
+.error-message {
+	color: #ff3300;
+}
+
+h1.marvellbranding1 {
+	width: 200; height: 25;
+	background:url('../images/marvell_horiz_logo.jpg') no-repeat;
+}
+
+h1.marvellbranding1 span {
+	display: none;
+}
+
+h1.rtbranding1 {
+	width: 100; height: 26;
+	background:url('../images/rtlogo-100x26.jpg') no-repeat;
+}
+
+h1.rtbranding1 span {
+	display: none;
+}
+

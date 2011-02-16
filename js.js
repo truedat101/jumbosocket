@@ -44,6 +44,7 @@ var io = require('socket.io'),
 	createServer = require('http').createServer,
 	sys = require('sys'),
 	assert = require('assert'), 
+	fs = require('fs'),
 	url = require('url');
 
 /** 
@@ -329,7 +330,7 @@ var server = createServer(function(req, res) {
 					for (var expr in js.RE_MAP) {
 						sys.puts('expr: ' + expr);
 						if (js.RE_MAP[expr] && js.RE_MAP[expr].test(url.parse(req.url).pathname)) {
-							handler = js.ROUTE_MAP[js.RE_MAP[unid].toString()];
+							handler = js.ROUTE_MAP[js.RE_MAP[expr].toString()];
 							break;
 						}
 					}
@@ -363,6 +364,10 @@ var server = createServer(function(req, res) {
 /**
   * Utility Routines
   */
+function extname (path) {
+  var index = path.lastIndexOf(".");
+  return index < 0 ? "" : path.substring(index);
+}
 
 /**
   * Error Routines
@@ -381,6 +386,8 @@ function internalServerError(req, res) { // XXX Add a nicely formatted version!
 /**
   * JumboSocket Service Handler - Define your App Here
   */
+js.get("/", js.staticHandler("index.html"));
+
 js.get("/helloworld", function(req, res) {
 	var body = 'hello world';
 	res.writeHead(200, {
