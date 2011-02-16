@@ -55,8 +55,8 @@ DEBUG = true;
 
 js.CONFIG = {
 	'HTTPWS_PORT':8000,
-	'VERSION_TAG':'0.1',
-	'VERSION_DESCRIPTION':'TODO',
+	'VERSION_TAG':'0.1.0',
+	'VERSION_DESCRIPTION':'Put your app description here',
 
 };
 var INTERNAL_SERVER_ERROR = 'Internal Server Error!  Oh pshaw\n';
@@ -64,8 +64,8 @@ var INTERNAL_SERVER_ERROR = 'Internal Server Error!  Oh pshaw\n';
   * js.js - jumbosocket 
   * 
   */
-js.ROUTE_MAP = {};
-js.RE_MAP = {};
+js.ROUTE_MAP = {}; // Populate this with the App Routes you set up
+js.RE_MAP = {}; // Populate this with the App Routes you set up
 js.address = 'localhost';
 
 if (DEBUG) {
@@ -398,6 +398,18 @@ js.get("/helloworld", function(req, res) {
 	res.end();
 });
 
+js.get("/helloworld2/[\\w\\.\\-]+", function(req, res) {
+	var route = url.parse(req.url).pathname.split('/')[2];
+	var body = 'hello world 2 on route ' + route;
+	
+	res.writeHead(200, {
+	  'Content-Length': body.length,
+	  'Content-Type': 'text/plain'
+	});
+	res.write(body);
+	res.end();
+});
+
 js.get("/about", function(req, res) {
 	var body = js.CONFIG['VERSION_TAG'] + ': ' + js.CONFIG['VERSION_DESCRIPTION'];
 	res.writeHead(200, {
@@ -412,14 +424,14 @@ js.listenHttpWS(js.CONFIG['HTTPWS_PORT'], js.address);
 
 js.listenSocketIO(function(client) {
 	client.on('message', function() {
-		sys.puts('socket client.on message');
+		sys.puts('socket client.on message at ' + (new Date().getTime()));
 	});
 
 	client.on('disconnect', function() {
-		sys.puts('socket client.on disconnect');
+		sys.puts('socket client.on disconnect at ' + (new Date().getTime()));
 	});
 	
 	client.on('connect', function() {
-		sys.puts('socket client.on connect');
+		sys.puts('socket client.on connect at ' + (new Date().getTime()));
 	});
 });
