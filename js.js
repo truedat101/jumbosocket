@@ -60,6 +60,7 @@ js.CONFIG = {
 
 };
 var INTERNAL_SERVER_ERROR = 'Internal Server Error!  Oh pshaw\n';
+var NOT_FOUND_ERROR = '404 Error :(  I am sad.  \n';
 /**
   * js.js - jumbosocket 
   * 
@@ -328,10 +329,12 @@ var server = createServer(function(req, res) {
 				handler = js.ROUTE_MAP[url.parse(req.url).pathname];
 				if (!handler) {
 					for (var expr in js.RE_MAP) {
-						sys.puts('expr: ' + expr);
+						sys.puts('Test ' + req.url + ' against expr: ' + expr);
 						if (js.RE_MAP[expr] && js.RE_MAP[expr].test(url.parse(req.url).pathname)) {
 							handler = js.ROUTE_MAP[js.RE_MAP[expr].toString()];
 							break;
+						} else {
+							handler = notFound;
 						}
 					}
 				}
@@ -383,6 +386,14 @@ function internalServerError(req, res) { // XXX Add a nicely formatted version!
   res.end();
 }
 
+function notFound(req, res) {
+  res.writeHead(404, {  'Content-Type': 'text/plain',
+						'Content-Length': NOT_FOUND_ERROR.length
+                     });
+  res.write(NOT_FOUND_ERROR);
+  // sys.log(sys.inspect(getMap, true, null)); // XXX Dump the getMap to the logs
+  res.end();
+}
 /**
   * JumboSocket Service Handler - Define your App Here
   */
@@ -398,10 +409,10 @@ js.get("/helloworld", function(req, res) {
 	res.end();
 });
 
-js.get("/helloworld2/[\\w\\.\\-]+", function(req, res) {
+js.getterer("/helloworldly/[\\w\\.\\-]+", function(req, res) {
 	var route = url.parse(req.url).pathname.split('/')[2];
-	var body = 'hello world 2 on route ' + route;
-	
+	var body = 'helloworldy on route ' + route;
+	sys.puts('helloworldly');	
 	res.writeHead(200, {
 	  'Content-Length': body.length,
 	  'Content-Type': 'text/plain'
@@ -434,4 +445,8 @@ js.listenSocketIO(function(client) {
 	client.on('connect', function() {
 		sys.puts('socket client.on connect at ' + (new Date().getTime()));
 	});
+
+	setTimeout(function() {
+		client.send("Ya'll ready for this");
+	}, 10000);
 });
