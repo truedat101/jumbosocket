@@ -412,8 +412,14 @@ js.listenHttpWS(js.CONFIG['HTTPWS_PORT'], js.address);
 
 js.listenSocketIO(function(client) {
 	client.on('message', function() {
+		sys.puts('socket client.on message');
 	});
 
 	client.on('disconnect', function() {
+		sys.puts('socket client.on disconnect');
+	});
+	
+	client.on('connect', function() {
+		sys.puts('socket client.on connect');
 	});
 });
