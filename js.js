@@ -434,8 +434,8 @@ js.get("/about", function(req, res) {
 js.listenHttpWS(js.CONFIG['HTTPWS_PORT'], js.address);
 
 js.listenSocketIO(function(client) {
-	client.on('message', function() {
-		sys.puts('socket client.on message at ' + (new Date().getTime()));
+	client.on('message', function(data) {
+		sys.puts('socket client.on message data = ' + data + ' at ' + (new Date().getTime()));
 	});
 
 	client.on('disconnect', function() {
@@ -446,7 +446,7 @@ js.listenSocketIO(function(client) {
 		sys.puts('socket client.on connect at ' + (new Date().getTime()));
 	});
 
-	setTimeout(function() {
+	setTimeout(function() { // This could be a tweet stream, game status updates, robot messages
 		client.send("Ya'll ready for this");
 	}, 10000);
 });
