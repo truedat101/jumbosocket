@@ -36,6 +36,10 @@ Troubleshooting:
 * If you are on Mac OS X, there is a good chance you didn't build node.js with SSL enabled, mainly because there is problem at the configure phase finding an i64 based openssl library and headers.  If you get errors running this socket.io demo or any of the others, there is a good chance it is a crypto error, at runtime.  Socket.io needs the crypto enabled in Node.js.
 * You may experience an issue finding xml2js on node >= 0.4.0 .  This has to do with differences in the package maintainer's packaging vs. the way node handles how to find packages in the system.
 
+Known Issues
+* Doesn't work in Firefox 4.0 (and maybe in 3.0).
+* Missing test cases ... I test manually.  I would like to try out Jasmine or one of these other test frameworks.
+
 Suggestions and Questions:
 * Post them on the google group.  I don't really know anything about socket.io and while proficient in node.js, I am not a JS developer by trade, so there are surely better and more efficient ways to code.  Send me your ideas.
 
