@@ -4,9 +4,11 @@ Installation:  You need the prerequisites:
 * Node.js 0.2 x or great (not sure what Socket.io needs to work)
 * NPM (recommended)
 * Socket.io (install via NPM or include the source so it is available in the require path)
-
+* simpledb [optional] - (install via NPM or include the source so it is available in the require path) ... consequently, this depends on xml2js which has problems being found in node >= 0.4.0 unfortunately.
+* Best bet is to run 'npm bundle' in the root project directory.  This will grab you the dependencies and drop them into your node_modules directory (see )
 Configure:
 * You can configure js.js in the config section (set host and port)
+* If you plan to use Amazon AWS SimpleDB, you will need to provide your AWS Access Key ID and Secret Access Key
 
 To run:
 

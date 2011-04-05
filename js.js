@@ -34,8 +34,14 @@ var js = exports;
   * Attributions
   */
 /** 
-  js.js inspired by fu.js and socket.io 
+  js.js a small server for big ideas, offering a small template starter project, inspired by fu.js and utilizing socket.io 
  */
+
+/**
+ * Use paths relative to node_modules directory and not global module space.
+ * XXX Do I need to do this??
+ */
+// require.paths.unshift('./node_modules');
 
 /** 
  * Imports
@@ -45,7 +51,9 @@ var io = require('socket.io'),
 	sys = require('sys'),
 	assert = require('assert'), 
 	fs = require('fs'),
-	url = require('url');
+	url = require('url'),
+	simpledb = require('simpledb'); // COMMENT OUT IF YOU DON'T WANT TO USE SIMPLEDB
+	
 
 /** 
   * CONFIG
@@ -57,10 +65,13 @@ js.CONFIG = {
 	'HTTPWS_PORT':8000,
 	'VERSION_TAG':'0.1.0',
 	'VERSION_DESCRIPTION':'Put your app description here',
-
+	'AWS_KEY_ID':'PUT YOUR KEY',
+	'AWS_SECRET_KEY':'PUT YOUR KEY',
 };
+
 var INTERNAL_SERVER_ERROR = 'Internal Server Error!  Oh pshaw\n';
 var NOT_FOUND_ERROR = '404 Error :(  I am sad.  \n';
+
 /**
   * js.js - jumbosocket 
   * 
@@ -421,6 +432,33 @@ js.getterer("/helloworldly/[\\w\\.\\-]+", function(req, res) {
 	res.end();
 });
 
+js.getterer("/simpledblookup/[\\w\\.\\-]+", function(req, res) {
+	var route = url.parse(req.url).pathname.split('/')[2];
+	var body = 'simpldblookup result: ';
+	sys.puts('simpledblookup on domain ' + route);
+	var sdb = new simpledb.SimpleDB(
+	  {keyid:js.CONFIG['AWS_KEY_ID'],secret:js.CONFIG['AWS_SECRET_KEY']},
+	  simpledb.debuglogger
+	);
+	sdb.listDomains( function( error, result, meta ) {
+	  if( error ) {
+	    console.log('listDomains failed: '+error.Message )
+		body += error.Message
+	  }
+	  else {
+	    // do stuff with result, an array of domain names
+		body += JSON.stringify(res);
+		console.log('listDomains failed: '+ body)
+	  }
+	  res.writeHead(200, {
+	  	'Content-Length': body.length,
+		'Content-Type': 'text/plain'
+	  });
+		res.write(body);
+		res.end();
+	});
+});
+
 js.get("/about", function(req, res) {
 	var body = js.CONFIG['VERSION_TAG'] + ': ' + js.CONFIG['VERSION_DESCRIPTION'];
 	res.writeHead(200, {
@@ -430,6 +468,7 @@ js.get("/about", function(req, res) {
 	res.write(body);
 	res.end();
 });
+
 
 js.listenHttpWS(js.CONFIG['HTTPWS_PORT'], js.address);
 
