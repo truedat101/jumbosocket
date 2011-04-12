@@ -52,7 +52,6 @@ var io = require('socket.io'),
 	assert = require('assert'), 
 	fs = require('fs'),
 	url = require('url'),
-	simpledb = require('simpledb'); // COMMENT OUT IF YOU DON'T WANT TO USE SIMPLEDB
 	
 
 /** 
@@ -505,6 +504,7 @@ js.getterer("/helloworldly/[\\w\\.\\-]+", function(req, res) {
 	res.write(body);
 	res.end();
 });
+/*
 js.getterer("/simpledbdatadump/[\\w\\.\\-]+", function(req, res) {
 	var route = url.parse(req.url).pathname.split('/')[2];
 	var body = 'simpledbdatadump result: ';
@@ -570,6 +570,7 @@ js.get("/simpledblistdomains", function(req, res) {
 		res.end();
 	});
 });
+*/
 
 js.get("/about", function(req, res) {
 	var body = js.CONFIG['VERSION_TAG'] + ': ' + js.CONFIG['VERSION_DESCRIPTION'];
