@@ -1,4 +1,4 @@
-/** Socket.IO 0.5.3 - Built with build.js */
+/** Socket.IO 0.6.2 - Built with build.js */
 /**
  * Socket.IO client
  * 
@@ -8,20 +8,23 @@
  */
 
 this.io = {
-	version: '0.5.3',
+	version: '0.6.2',
 	
 	setPath: function(path){
+		if (window.console && console.error) console.error('io.setPath will be removed. Please set the variable WEB_SOCKET_SWF_LOCATION pointing to WebSocketMain.swf');
 		this.path = /\/$/.test(path) ? path : path + '/';
-		
-		// this is temporary until we get a fix for injecting Flash WebSocket javascript files dynamically,
-		// as io.js shouldn't be aware of specific transports.
-		if ('WebSocket' in window){
-			WebSocket.__swfLocation = path + 'lib/vendor/web-socket-js/WebSocketMain.swf';
-		}
+    WEB_SOCKET_SWF_LOCATION = path + 'lib/vendor/web-socket-js/WebSocketMain.swf';
 	}
 };
 
 if ('jQuery' in this) jQuery.io = this.io;
+
+if (typeof window != 'undefined'){
+  // WEB_SOCKET_SWF_LOCATION = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//cdn.socket.io/' + this.io.version + '/WebSocketMain.swf';
+  if (typeof WEB_SOCKET_SWF_LOCATION === 'undefined')
+    WEB_SOCKET_SWF_LOCATION = '/socket.io/lib/vendor/web-socket-js/WebSocketMain.swf';
+}
+
 /**
  * Socket.IO client
  * 
@@ -30,27 +33,59 @@ if ('jQuery' in this) jQuery.io = this.io;
  * @copyright Copyright (c) 2010 LearnBoost <dev@learnboost.com>
  */
 
-io.util = {
-	
-	inherit: function(ctor, superCtor){
-		// no support for `instanceof` for now
-		for (var i in superCtor.prototype){
-			ctor.prototype[i] = superCtor.prototype[i];
-		}
-	},
-	
-	indexOf: function(arr, item, from){
-		for (var l = arr.length, i = (from < 0) ? Math.max(0, l + from) : from || 0; i < l; i++){
-			if (arr[i] === item) return i;
-		}
-		return -1;
-	},
-	
-	isArray: function(obj){
-		return Object.prototype.toString.call(obj) === '[object Array]';
-	}
-	
-};
+(function(){
+
+	var _pageLoaded = false;
+
+	io.util = {
+
+		ios: false,
+
+		load: function(fn){
+			if (/loaded|complete/.test(document.readyState) || _pageLoaded) return fn();
+			if ('attachEvent' in window){
+				window.attachEvent('onload', fn);
+			} else {
+				window.addEventListener('load', fn, false);
+			}
+		},
+
+		inherit: function(ctor, superCtor){
+			// no support for `instanceof` for now
+			for (var i in superCtor.prototype){
+				ctor.prototype[i] = superCtor.prototype[i];
+			}
+		},
+
+		indexOf: function(arr, item, from){
+			for (var l = arr.length, i = (from < 0) ? Math.max(0, l + from) : from || 0; i < l; i++){
+				if (arr[i] === item) return i;
+			}
+			return -1;
+		},
+
+		isArray: function(obj){
+			return Object.prototype.toString.call(obj) === '[object Array]';
+		},
+		
+    merge: function(target, additional){
+      for (var i in additional)
+        if (additional.hasOwnProperty(i))
+          target[i] = additional[i];
+    }
+
+	};
+
+	io.util.ios = /iphone|ipad/i.test(navigator.userAgent);
+	io.util.android = /android/i.test(navigator.userAgent);
+	io.util.opera = /opera/i.test(navigator.userAgent);
+
+	io.util.load(function(){
+		_pageLoaded = true;
+	});
+
+})();
+
 /**
  * Socket.IO client
  * 
@@ -65,9 +100,24 @@ io.util = {
 	
 	var frame = '~m~',
 	
+	stringify = function(message){
+		if (Object.prototype.toString.call(message) == '[object Object]'){
+			if (!('JSON' in window)){
+				if ('console' in window && console.error) console.error('Trying to encode as JSON, but JSON.stringify is missing.');
+				return '{ "$error": "Invalid message" }';
+			}
+			return '~j~' + JSON.stringify(message);
+		} else {
+			return String(message);
+		}
+	};
+	
 	Transport = io.Transport = function(base, options){
 		this.base = base;
-		this.options = options;
+		this.options = {
+			timeout: 15000 // based on heartbeat interval default
+		};
+		io.util.merge(this.options, options);
 	};
 
 	Transport.prototype.send = function(){
@@ -86,7 +136,7 @@ io.util = {
 		var ret = '', message,
 				messages = io.util.isArray(messages) ? messages : [messages];
 		for (var i = 0, l = messages.length; i < l; i++){
-			message = messages[i] === null || messages[i] === undefined ? '' : String(messages[i]);
+			message = messages[i] === null || messages[i] === undefined ? '' : stringify(messages[i]);
 			ret += frame + message.length + frame + message;
 		}
 		return ret;
@@ -103,7 +153,7 @@ io.util = {
 				if (data.substr(i, 1) == n){
 					number += n;
 				} else {	
-					data = data.substr(number.length + frame.length)
+					data = data.substr(number.length + frame.length);
 					number = Number(number);
 					break;
 				} 
@@ -115,20 +165,35 @@ io.util = {
 	};
 	
 	Transport.prototype._onData = function(data){
+		this._setTimeout();
 		var msgs = this._decode(data);
-		if (msgs){
+		if (msgs && msgs.length){
 			for (var i = 0, l = msgs.length; i < l; i++){
 				this._onMessage(msgs[i]);
 			}
 		}
 	};
 	
+	Transport.prototype._setTimeout = function(){
+		var self = this;
+		if (this._timeout) clearTimeout(this._timeout);
+		this._timeout = setTimeout(function(){
+			self._onTimeout();
+		}, this.options.timeout);
+	};
+	
+	Transport.prototype._onTimeout = function(){
+		this._onDisconnect();
+	};
+	
 	Transport.prototype._onMessage = function(message){
-		if (!('sessionid' in this)){
+		if (!this.sessionid){
 			this.sessionid = message;
 			this._onConnect();
 		} else if (message.substr(0, 3) == '~h~'){
 			this._onHeartbeat(message.substr(3));
+		} else if (message.substr(0, 3) == '~j~'){
+			this.base._onMessage(JSON.parse(message.substr(3)));
 		} else {
 			this.base._onMessage(message);
 		}
@@ -140,12 +205,15 @@ io.util = {
 	
 	Transport.prototype._onConnect = function(){
 		this.connected = true;
+		this.connecting = false;
 		this.base._onConnect();
+		this._setTimeout();
 	};
 
 	Transport.prototype._onDisconnect = function(){
-		if (!this.connected) return;
+		this.connecting = false;
 		this.connected = false;
+		this.sessionid = null;
 		this.base._onDisconnect();
 	};
 
@@ -170,32 +238,39 @@ io.util = {
 (function(){
 	
 	var empty = new Function,
+	    
+	XMLHttpRequestCORS = (function(){
+		if (!('XMLHttpRequest' in window)) return false;
+		// CORS feature detection
+		var a = new XMLHttpRequest();
+		return a.withCredentials != undefined;
+	})(),
 	
 	request = function(xdomain){
 		if ('XDomainRequest' in window && xdomain) return new XDomainRequest();
-		if ('XMLHttpRequest' in window) return new XMLHttpRequest();
+		if ('XMLHttpRequest' in window && (!xdomain || XMLHttpRequestCORS)) return new XMLHttpRequest();
+		if (!xdomain){
+			try {
+				var a = new ActiveXObject('MSXML2.XMLHTTP');
+				return a;
+			} catch(e){}
 		
-		try {
-			var a = new ActiveXObject('MSXML2.XMLHTTP');
-			return a;
-		} catch(e){}
-		
-		try {
-			var b = new ActiveXObject('Microsoft.XMLHTTP');
-			return b;
-		} catch(e){}
-		
+			try {
+				var b = new ActiveXObject('Microsoft.XMLHTTP');
+				return b;
+			} catch(e){}
+		}
 		return false;
 	},
 	
 	XHR = io.Transport.XHR = function(){
 		io.Transport.apply(this, arguments);
+		this._sendBuffer = [];
 	};
 	
 	io.util.inherit(XHR, io.Transport);
 	
 	XHR.prototype.connect = function(){
-		if (!('_sendBuffer' in this)) this._sendBuffer = [];
 		this._get();
 		return this;
 	};
@@ -222,54 +297,72 @@ io.util = {
 		var self = this;
 		this._posting = true;
 		this._sendXhr = this._request('send', 'POST');
-		this._sendXhr.send('data=' + encodeURIComponent(data));
 		this._sendXhr.onreadystatechange = function(){
 			var status;
 			if (self._sendXhr.readyState == 4){
 				self._sendXhr.onreadystatechange = empty;
 				try { status = self._sendXhr.status; } catch(e){}
+				self._posting = false;
 				if (status == 200){
-					self._posting = false;
 					self._checkSend();
+				} else {
+					self._onDisconnect();
 				}
 			}
 		};
-	},
+		this._sendXhr.send('data=' + encodeURIComponent(data));
+	};
 	
 	XHR.prototype.disconnect = function(){
-		if (this._xhr){
-			this._xhr.onreadystatechange = this._xhr.onload = empty;
-			this._xhr.abort();
-		}
-		if (this._sendXhr){
-			this._sendXhr.onreadystatechange = this._sendXhr.onload = empty;
-			this._sendXhr.abort();
-		} 
-		this._onClose();
+		// send disconnection signal
 		this._onDisconnect();
 		return this;
-	}
+	};
+	
+	XHR.prototype._onDisconnect = function(){
+		if (this._xhr){
+			this._xhr.onreadystatechange = empty;
+      try {
+        this._xhr.abort();
+      } catch(e){}
+			this._xhr = null;
+		}
+		if (this._sendXhr){
+      this._sendXhr.onreadystatechange = empty;
+      try {
+        this._sendXhr.abort();
+      } catch(e){}
+			this._sendXhr = null;
+		}
+		this._sendBuffer = [];
+		io.Transport.prototype._onDisconnect.call(this);
+	};
 	
 	XHR.prototype._request = function(url, method, multipart){
 		var req = request(this.base._isXDomain());
 		if (multipart) req.multipart = true;
 		req.open(method || 'GET', this._prepareUrl() + (url ? '/' + url : ''));
-		if (method == 'POST'){
+		if (method == 'POST' && 'setRequestHeader' in req){
 			req.setRequestHeader('Content-type', 'application/x-www-form-urlencoded; charset=utf-8');
 		}
 		return req;
 	};
 	
-	XHR.check = function(){
+	XHR.check = function(xdomain){
 		try {
-			if (request()) return true;
+			if (request(xdomain)) return true;
 		} catch(e){}
 		return false;
+	};
+	
+	XHR.xdomainCheck = function(){
+		return XHR.check(true);
 	};
 	
 	XHR.request = request;
 	
 })();
+
 /**
  * Socket.IO client
  * 
@@ -293,16 +386,17 @@ io.util = {
 		this.socket = new WebSocket(this._prepareUrl());
 		this.socket.onmessage = function(ev){ self._onData(ev.data); };
 		this.socket.onclose = function(ev){ self._onClose(); };
+    this.socket.onerror = function(e){ self._onError(e); };
 		return this;
 	};
 	
 	WS.prototype.send = function(data){
-		this.socket.send(this._encode(data));
+		if (this.socket) this.socket.send(this._encode(data));
 		return this;
-	}
+	};
 	
 	WS.prototype.disconnect = function(){
-		this.socket.close();
+		if (this.socket) this.socket.close();
 		return this;
 	};
 	
@@ -310,6 +404,10 @@ io.util = {
 		this._onDisconnect();
 		return this;
 	};
+
+  WS.prototype._onError = function(e){
+    this.base.emit('error', [e]);
+  };
 	
 	WS.prototype._prepareUrl = function(){
 		return (this.base.options.secure ? 'wss' : 'ws') 
@@ -322,7 +420,7 @@ io.util = {
 	
 	WS.check = function(){
 		// we make sure WebSocket is not confounded with a previously loaded flash WebSocket
-		return 'WebSocket' in window && !('__initialize' in WebSocket);
+		return 'WebSocket' in window && WebSocket.prototype && ( WebSocket.prototype.send && !!WebSocket.prototype.send.toString().match(/native/i)) && typeof WebSocket !== "undefined";
 	};
 
 	WS.xdomainCheck = function(){
@@ -330,6 +428,7 @@ io.util = {
 	};
 	
 })();
+
 /**
  * Socket.IO client
  * 
@@ -348,19 +447,25 @@ io.util = {
 	
 	Flashsocket.prototype.type = 'flashsocket';
 	
-	Flashsocket.prototype._onClose = function(){
-		if (!this.base.connected){
-			// something failed, we might be behind a proxy, so we'll try another transport
-			this.base.options.transports.splice(io.util.indexOf(this.base.options.transports, 'flashsocket'), 1);
-			this.base.transport = this.base.getTransport();
-			this.base.connect();
-			return;
-		}
-		return io.Transport.websocket.prototype._onClose.call(this);
+	Flashsocket.prototype.connect = function(){
+		var self = this, args = arguments;
+		WebSocket.__addTask(function(){
+			io.Transport.websocket.prototype.connect.apply(self, args);
+		});
+		return this;
+	};
+	
+	Flashsocket.prototype.send = function(){
+		var self = this, args = arguments;
+		WebSocket.__addTask(function(){
+			io.Transport.websocket.prototype.send.apply(self, args);
+		});
+		return this;
 	};
 	
 	Flashsocket.check = function(){
-		if (!('path' in io)) throw new Error('The `flashsocket` transport requires that you call io.setPath() with the path to the socket.io client dir.');
+		if (typeof WebSocket == 'undefined' || !('__addTask' in WebSocket)) return false;
+		if (io.util.opera) return false; // opera is buggy with this transport
 		if ('navigator' in window && 'plugins' in navigator && navigator.plugins['Shockwave Flash']){
 			return !!navigator.plugins['Shockwave Flash'].description;
 	  }
@@ -420,12 +525,14 @@ io.util = {
 		var script = doc.getElementsByTagName('script')[0];
 		script.parentNode.removeChild(script);
 	};
-	
-	HTMLFile.prototype._destroy = function(){
-		this._iframe.src = 'about:blank';
-		this._doc = null;
-		CollectGarbage();
-	};
+
+  HTMLFile.prototype._destroy = function(){
+    if (this._iframe){
+      this._iframe.src = 'about:blank';
+      this._doc = null;
+      CollectGarbage();
+    }
+  };
 	
 	HTMLFile.prototype.disconnect = function(){
 		this._destroy();
@@ -443,7 +550,8 @@ io.util = {
 	};
 
 	HTMLFile.xdomainCheck = function(){
-		return false; // send() is not cross domain. we need to POST to an iframe to fix it
+		// we can probably do handling for sub-domains, we should test that it's cross domain but a subdomain here
+		return false;
 	};
 	
 })();
@@ -469,13 +577,13 @@ io.util = {
 		var self = this;
 		this._xhr = this._request('', 'GET', true);
 		this._xhr.onreadystatechange = function(){
-			if (self._xhr.readyState == 3) self._onData(self._xhr.responseText);
+			if (self._xhr.readyState == 4) self._onData(self._xhr.responseText);
 		};
-		this._xhr.send();
+		this._xhr.send(null);
 	};
 	
 	XHRMultipart.check = function(){
-		return 'XMLHttpRequest' in window && 'multipart' in XMLHttpRequest.prototype;
+		return 'XMLHttpRequest' in window && 'prototype' in XMLHttpRequest && 'multipart' in XMLHttpRequest.prototype;
 	};
 
 	XHRMultipart.xdomainCheck = function(){
@@ -483,6 +591,7 @@ io.util = {
 	};
 	
 })();
+
 /**
  * Socket.IO client
  * 
@@ -492,50 +601,175 @@ io.util = {
  */
 
 (function(){
-	
+
 	var empty = new Function(),
-	
+
 	XHRPolling = io.Transport['xhr-polling'] = function(){
 		io.Transport.XHR.apply(this, arguments);
 	};
-	
+
 	io.util.inherit(XHRPolling, io.Transport.XHR);
-	
+
 	XHRPolling.prototype.type = 'xhr-polling';
-	
+
+	XHRPolling.prototype.connect = function(){
+		if (io.util.ios || io.util.android){
+			var self = this;
+			io.util.load(function(){
+				setTimeout(function(){
+					io.Transport.XHR.prototype.connect.call(self);
+				}, 10);
+			});
+		} else {
+			io.Transport.XHR.prototype.connect.call(this);
+		}
+	};
+
 	XHRPolling.prototype._get = function(){
 		var self = this;
 		this._xhr = this._request(+ new Date, 'GET');
-		if ('onload' in this._xhr){
-			this._xhr.onload = function(){
-				if (this.responseText.length) self._onData(this.responseText);
-				self.connect();
-			};
-		} else {
-			this._xhr.onreadystatechange = function(){
-				var status;
-				if (self._xhr.readyState == 4){
-					self._xhr.onreadystatechange = empty;
-					try { status = self._xhr.status; } catch(e){}
-					if (status == 200){
-						if (self._xhr.responseText.length) self._onData(self._xhr.responseText);
-						self.connect();
-					}
-				}
-			};
-		}
-		this._xhr.send();
+    this._xhr.onreadystatechange = function(){
+      var status;
+      if (self._xhr.readyState == 4){
+        self._xhr.onreadystatechange = empty;
+        try { status = self._xhr.status; } catch(e){}
+        if (status == 200){
+          self._onData(self._xhr.responseText);
+          self._get();
+        } else {
+          self._onDisconnect();
+        }
+      }
+    };
+		this._xhr.send(null);
 	};
-	
+
 	XHRPolling.check = function(){
 		return io.Transport.XHR.check();
 	};
-	
+
 	XHRPolling.xdomainCheck = function(){
-		return 'XDomainRequest' in window || 'XMLHttpRequest' in window;
+		return io.Transport.XHR.xdomainCheck();
 	};
-	
+
 })();
+
+/**
+ * Socket.IO client
+ * 
+ * @author Guillermo Rauch <guillermo@learnboost.com>
+ * @license The MIT license.
+ * @copyright Copyright (c) 2010 LearnBoost <dev@learnboost.com>
+ */
+
+io.JSONP = [];
+
+JSONPPolling = io.Transport['jsonp-polling'] = function(){
+	io.Transport.XHR.apply(this, arguments);
+	this._insertAt = document.getElementsByTagName('script')[0];
+	this._index = io.JSONP.length;
+	io.JSONP.push(this);
+};
+
+io.util.inherit(JSONPPolling, io.Transport['xhr-polling']);
+
+JSONPPolling.prototype.type = 'jsonp-polling';
+
+JSONPPolling.prototype._send = function(data){
+	var self = this;
+	if (!('_form' in this)){
+		var form = document.createElement('FORM'),
+		    area = document.createElement('TEXTAREA'),
+		    id = this._iframeId = 'socket_io_iframe_' + this._index,
+		    iframe;
+
+		form.style.position = 'absolute';
+		form.style.top = '-1000px';
+		form.style.left = '-1000px';
+		form.target = id;
+		form.method = 'POST';
+		form.action = this._prepareUrl() + '/' + (+new Date) + '/' + this._index;
+		area.name = 'data';
+		form.appendChild(area);
+		this._insertAt.parentNode.insertBefore(form, this._insertAt);
+		document.body.appendChild(form);
+
+		this._form = form;
+		this._area = area;
+	}
+
+	function complete(){
+		initIframe();
+		self._posting = false;
+		self._checkSend();
+	};
+
+	function initIframe(){
+		if (self._iframe){
+			self._form.removeChild(self._iframe);
+		} 
+
+		try {
+			// ie6 dynamic iframes with target="" support (thanks Chris Lambacher)
+			iframe = document.createElement('<iframe name="'+ self._iframeId +'">');
+		} catch(e){
+			iframe = document.createElement('iframe');
+			iframe.name = self._iframeId;
+		}
+
+		iframe.id = self._iframeId;
+
+		self._form.appendChild(iframe);
+		self._iframe = iframe;
+	};
+
+	initIframe();
+
+	this._posting = true;
+	this._area.value = data;
+
+	try {
+		this._form.submit();
+	} catch(e){}
+
+	if (this._iframe.attachEvent){
+		iframe.onreadystatechange = function(){
+			if (self._iframe.readyState == 'complete') complete();
+		};
+	} else {
+		this._iframe.onload = complete;
+	}
+};
+
+JSONPPolling.prototype._get = function(){
+	var self = this,
+			script = document.createElement('SCRIPT');
+	if (this._script){
+		this._script.parentNode.removeChild(this._script);
+		this._script = null;
+	}
+	script.async = true;
+	script.src = this._prepareUrl() + '/' + (+new Date) + '/' + this._index;
+	script.onerror = function(){
+		self._onDisconnect();
+	};
+	this._insertAt.parentNode.insertBefore(script, this._insertAt);
+	this._script = script;
+};
+
+JSONPPolling.prototype._ = function(){
+	this._onData.apply(this, arguments);
+	this._get();
+	return this;
+};
+
+JSONPPolling.check = function(){
+	return true;
+};
+
+JSONPPolling.xdomainCheck = function(){
+	return true;
+};
 /**
  * Socket.IO client
  * 
@@ -551,14 +785,22 @@ io.util = {
 		this.options = {
 			secure: false,
 			document: document,
-			heartbeatInterval: 4000,
 			port: document.location.port || 80,
 			resource: 'socket.io',
-			transports: ['websocket', 'flashsocket', 'htmlfile', 'xhr-multipart', 'xhr-polling'],
-			transportOptions: {},
-			rememberTransport: false
+			transports: ['websocket', 'flashsocket', 'htmlfile', 'xhr-multipart', 'xhr-polling', 'jsonp-polling'],
+			transportOptions: {
+				'xhr-polling': {
+					timeout: 25000 // based on polling duration default
+				},
+				'jsonp-polling': {
+					timeout: 25000
+				}
+			},
+			connectTimeout: 5000,
+			tryTransportsOnConnectTimeout: true,
+			rememberTransport: true
 		};
-		for (var i in options) this.options[i] = options[i];
+		io.util.merge(this.options, options);
 		this.connected = false;
 		this.connecting = false;
 		this._events = {};
@@ -566,11 +808,14 @@ io.util = {
 		if (!this.transport && 'console' in window) console.error('No transport available');
 	};
 	
-	Socket.prototype.getTransport = function(){
-		var transports = this.options.transports, match;
-		if (this.options.rememberTransport){
-			match = this.options.document.cookie.match('(?:^|;)\\s*socket\.io=([^;]*)');
-			if (match) transports = [decodeURIComponent(match[1])];
+	Socket.prototype.getTransport = function(override){
+		var transports = override || this.options.transports, match;
+		if (this.options.rememberTransport && !override){
+			match = this.options.document.cookie.match('(?:^|;)\\s*socketio=([^;]*)');
+			if (match){
+				this._rememberedTransport = true;
+				transports = [decodeURIComponent(match[1])];
+			}
 		} 
 		for (var i = 0, transport; transport = transports[i]; i++){
 			if (io.Transport[transport] 
@@ -583,10 +828,31 @@ io.util = {
 	};
 	
 	Socket.prototype.connect = function(){
-		if (this.transport && !this.connected && !this.connecting){
+		if (this.transport && !this.connected){
+			if (this.connecting) this.disconnect();
 			this.connecting = true;
+			this.emit('connecting', [this.transport.type]);
 			this.transport.connect();
-		}      
+			if (this.options.connectTimeout){
+				var self = this;
+				this.connectTimeoutTimer = setTimeout(function(){
+					if (!self.connected){
+						self.disconnect();
+						if (self.options.tryTransportsOnConnectTimeout && !self._rememberedTransport){
+							if(!self._remainingTransports) self._remainingTransports = self.options.transports.slice(0);
+							var transports = self._remainingTransports;
+							while(transports.length > 0 && transports.splice(0,1)[0] != self.transport.type){}
+							if(transports.length){
+								self.transport = self.getTransport(transports);
+								self.connect();
+							}
+						}
+						if(!self._remainingTransports || self._remainingTransports.length == 0) self.emit('connect_failed');
+					}
+					if(self._remainingTransports && self._remainingTransports.length == 0) delete self._remainingTransports;
+				}, this.options.connectTimeout);
+			}
+		}
 		return this;
 	};
 	
@@ -597,6 +863,7 @@ io.util = {
 	};
 	
 	Socket.prototype.disconnect = function(){
+    if (this.connectTimeoutTimer) clearTimeout(this.connectTimeoutTimer);
 		this.transport.disconnect();
 		return this;
 	};
@@ -607,20 +874,19 @@ io.util = {
 		return this;
 	};
 	
-	Socket.prototype.fire = function(name, args){
-		if (name in this._events){
-			for (var i in this._events[name])
-				this._events[name][i].apply(this, args);
-		}
-		return this;
-	};
-	
+  Socket.prototype.emit = function(name, args){
+    if (name in this._events){
+      var events = this._events[name].concat();
+      for (var i = 0, ii = events.length; i < ii; i++)
+        events[i].apply(this, args === undefined ? [] : args);
+    }
+    return this;
+  };
+
 	Socket.prototype.removeEvent = function(name, fn){
 		if (name in this._events){
-			for (var i in this._events[name]){
-				for (var a = 0, l = this._events[name].length; a < l; a++)
-					if (this._events[name][a] == fn) this._events[name].splice(a, 1);
-			}
+			for (var a = 0, l = this._events[name].length; a < l; a++)
+				if (this._events[name][a] == fn) this._events[name].splice(a, 1);		
 		}
 		return this;
 	};
@@ -646,21 +912,28 @@ io.util = {
 		this.connected = true;
 		this.connecting = false;
 		this._doQueue();
-		if (this.options.rememberTransport) this.options.document.cookie = 'socket.io=' + encodeURIComponent(this.transport.type);
-		this.fire('connect');
+		if (this.options.rememberTransport) this.options.document.cookie = 'socketio=' + encodeURIComponent(this.transport.type);
+		this.emit('connect');
 	};
 	
 	Socket.prototype._onMessage = function(data){
-		this.fire('message', [data]);
+		this.emit('message', [data]);
 	};
 	
 	Socket.prototype._onDisconnect = function(){
-		this.fire('disconnect');
+		var wasConnected = this.connected;
+		this.connected = false;
+		this.connecting = false;
+		this._queueStack = [];
+		if (wasConnected) this.emit('disconnect');
 	};
+
+  Socket.prototype.fire = Socket.prototype.emit;
 	
 	Socket.prototype.addListener = Socket.prototype.addEvent = Socket.prototype.addEventListener = Socket.prototype.on;
 	
 })();
+
 /*	SWFObject v2.2 <http://code.google.com/p/swfobject/> 
 	is released under the MIT License <http://www.opensource.org/licenses/mit-license.php> 
 */
@@ -1029,7 +1302,7 @@ FABridge.prototype =
     // accepts a type structure, returns a constructed type
     addTypeDataToCache: function(typeData)
     {
-        newType = new ASProxy(this, typeData.name);
+        var newType = new ASProxy(this, typeData.name);
         var accessors = typeData.accessors;
         for (var i = 0; i < accessors.length; i++)
         {
@@ -1280,28 +1553,18 @@ ASProxy.prototype =
   if (window.WebSocket) return;
 
   var console = window.console;
-  if (!console) console = {log: function(){ }, error: function(){ }};
-
-  function hasFlash() {
-    if ('navigator' in window && 'plugins' in navigator && navigator.plugins['Shockwave Flash']) {
-      return !!navigator.plugins['Shockwave Flash'].description;
-    }
-    if ('ActiveXObject' in window) {
-      try {
-        return !!new ActiveXObject('ShockwaveFlash.ShockwaveFlash').GetVariable('$version');
-      } catch (e) {}
-    }
-    return false;
+  if (!console || !console.log || !console.error) {
+    console = {log: function(){ }, error: function(){ }};
   }
   
-  if (!hasFlash()) {
+  if (!swfobject.hasFlashPlayerVersion("9.0.0")) {
     console.error("Flash Player is not installed.");
     return;
   }
-  console.log(location.protocol);
   if (location.protocol == "file:") {
     console.error(
-      "web-socket-js doesn't work in file:///... URL (without special configuration). " +
+      "WARNING: web-socket-js doesn't work in file:///... URL " +
+      "unless you set Flash Security Settings properly. " +
       "Open the page via Web server i.e. http://...");
   }
 
@@ -1315,96 +1578,55 @@ ASProxy.prototype =
       WebSocket.__addTask(function() {
         self.__createFlash(url, protocol, proxyHost, proxyPort, headers);
       });
-    }, 1);
-  }
+    }, 0);
+  };
   
   WebSocket.prototype.__createFlash = function(url, protocol, proxyHost, proxyPort, headers) {
     var self = this;
     self.__flash =
       WebSocket.__flash.create(url, protocol, proxyHost || null, proxyPort || 0, headers || null);
-
-    self.__flash.addEventListener("open", function(fe) {
-      try {
-        self.readyState = self.__flash.getReadyState();
-        if (self.__timer) clearInterval(self.__timer);
-        if (window.opera) {
-          // Workaround for weird behavior of Opera which sometimes drops events.
-          self.__timer = setInterval(function () {
-            self.__handleMessages();
-          }, 500);
-        }
-        if (self.onopen) self.onopen();
-      } catch (e) {
-        console.error(e.toString());
-      }
+    self.__flash.addEventListener("event", function(fe) {
+      // Uses setTimeout() to workaround the error:
+      // > You are trying to call recursively into the Flash Player which is not allowed.
+      setTimeout(function() { self.__handleEvents(); }, 0);
     });
-
-    self.__flash.addEventListener("close", function(fe) {
-      try {
-        self.readyState = self.__flash.getReadyState();
-        if (self.__timer) clearInterval(self.__timer);
-        if (self.onclose) self.onclose();
-      } catch (e) {
-        console.error(e.toString());
-      }
-    });
-
-    self.__flash.addEventListener("message", function() {
-      try {
-        self.__handleMessages();
-      } catch (e) {
-        console.error(e.toString());
-      }
-    });
-
-    self.__flash.addEventListener("error", function(fe) {
-      try {
-        if (self.__timer) clearInterval(self.__timer);
-        if (self.onerror) self.onerror();
-      } catch (e) {
-        console.error(e.toString());
-      }
-    });
-
-    self.__flash.addEventListener("stateChange", function(fe) {
-      try {
-        self.readyState = self.__flash.getReadyState();
-        self.bufferedAmount = fe.getBufferedAmount();
-      } catch (e) {
-        console.error(e.toString());
-      }
-    });
-
     //console.log("[WebSocket] Flash object is ready");
   };
 
   WebSocket.prototype.send = function(data) {
-    if (this.__flash) {
-      this.readyState = this.__flash.getReadyState();
-    }
     if (!this.__flash || this.readyState == WebSocket.CONNECTING) {
       throw "INVALID_STATE_ERR: Web Socket connection has not been established";
     }
+    // We use encodeURIComponent() here, because FABridge doesn't work if
+    // the argument includes some characters. We don't use escape() here
+    // because of this:
+    // https://developer.mozilla.org/en/Core_JavaScript_1.5_Guide/Functions#escape_and_unescape_Functions
+    // But it looks decodeURIComponent(encodeURIComponent(s)) doesn't
+    // preserve all Unicode characters either e.g. "\uffff" in Firefox.
     var result = this.__flash.send(encodeURIComponent(data));
     if (result < 0) { // success
       return true;
     } else {
-      this.bufferedAmount = result;
+      this.bufferedAmount += result;
       return false;
     }
   };
 
   WebSocket.prototype.close = function() {
-    if (!this.__flash) return;
-    this.readyState = this.__flash.getReadyState();
-    if (this.readyState != WebSocket.OPEN) return;
-    this.__flash.close();
+    var self = this;
+    if (!self.__flash) return;
+    if (self.readyState == WebSocket.CLOSED || self.readyState == WebSocket.CLOSING) return;
+    self.__flash.close();
     // Sets/calls them manually here because Flash WebSocketConnection.close cannot fire events
     // which causes weird error:
     // > You are trying to call recursively into the Flash Player which is not allowed.
-    this.readyState = WebSocket.CLOSED;
-    if (this.__timer) clearInterval(this.__timer);
-    if (this.onclose) this.onclose();
+    self.readyState = WebSocket.CLOSED;
+    if (self.__timer) clearInterval(self.__timer);
+    if (self.onclose) {
+       // Make it asynchronous so that it looks more like an actual
+       // close event
+       setTimeout(self.onclose, 0);
+     }
   };
 
   /**
@@ -1472,30 +1694,62 @@ ASProxy.prototype =
     }
   };
 
-  WebSocket.prototype.__handleMessages = function() {
-    // Gets data using readSocketData() instead of getting it from event object
+  WebSocket.prototype.__handleEvents = function() {
+    // Gets events using receiveEvents() instead of getting it from event object
     // of Flash event. This is to make sure to keep message order.
     // It seems sometimes Flash events don't arrive in the same order as they are sent.
-    var arr = this.__flash.readSocketData();
-    for (var i = 0; i < arr.length; i++) {
-      var data = decodeURIComponent(arr[i]);
+    var events = this.__flash.receiveEvents();
+    for (var i = 0; i < events.length; i++) {
       try {
-        if (this.onmessage) {
-          var e;
-          if (window.MessageEvent) {
-            e = document.createEvent("MessageEvent");
-            e.initMessageEvent("message", false, false, data, null, null, window, null);
-          } else { // IE
-            e = {data: data};
+        var event = events[i];
+        if ("readyState" in event) {
+          this.readyState = event.readyState;
+        }
+        if (event.type == "open") {
+          
+          if (this.__timer) clearInterval(this.__timer);
+          if (window.opera) {
+            // Workaround for weird behavior of Opera which sometimes drops events.
+            this.__timer = setInterval(function () {
+              this.__handleEvents();
+            }, 500);
           }
-          this.onmessage(e);
+          if (this.onopen) this.onopen();
+          
+        } else if (event.type == "close") {
+          
+          if (this.__timer) clearInterval(this.__timer);
+          if (this.onclose) this.onclose();
+          
+        } else if (event.type == "message") {
+          
+          if (this.onmessage) {
+            var data = decodeURIComponent(event.data);
+            var e;
+            if (window.MessageEvent && !window.opera) {
+              e = document.createEvent("MessageEvent");
+              e.initMessageEvent("message", false, false, data, null, null, window, null);
+            } else {
+              // IE and Opera, the latter one truncates the data parameter after any 0x00 bytes.
+              e = {data: data};
+            }
+            this.onmessage(e);
+          }
+          
+        } else if (event.type == "error") {
+          
+          if (this.__timer) clearInterval(this.__timer);
+          if (this.onerror) this.onerror();
+          
+        } else {
+          throw "unknown event type: " + event.type;
         }
       } catch (e) {
         console.error(e.toString());
       }
     }
   };
-
+  
   /**
    * @param {object} object
    * @param {string} type
@@ -1510,7 +1764,7 @@ ASProxy.prototype =
       }
       object.dispatchEvent(event, arguments);
     };
-  }
+  };
 
   /**
    * Basic implementation of {@link <a href="http://www.w3.org/TR/DOM-Level-2-Events/events.html#Events-interface">DOM 2 EventInterface</a>}
@@ -1571,6 +1825,12 @@ ASProxy.prototype =
 
   WebSocket.__tasks = [];
 
+  WebSocket.loadFlashPolicyFile = function(url) {
+    WebSocket.__addTask(function() {
+      WebSocket.__flash.loadManualPolicyFile(url);
+    });
+  }
+
   WebSocket.__initialize = function() {
     if (WebSocket.__swfLocation) {
       // For backword compatibility.
@@ -1582,18 +1842,29 @@ ASProxy.prototype =
     }
     var container = document.createElement("div");
     container.id = "webSocketContainer";
-    // Puts the Flash out of the window. Note that we cannot use display: none or visibility: hidden
-    // here because it prevents Flash from loading at least in IE.
+    // Hides Flash box. We cannot use display: none or visibility: hidden because it prevents
+    // Flash from loading at least in IE. So we move it out of the screen at (-100, -100).
+    // But this even doesn't work with Flash Lite (e.g. in Droid Incredible). So with Flash
+    // Lite, we put it at (0, 0). This shows 1x1 box visible at left-top corner but this is
+    // the best we can do as far as we know now.
     container.style.position = "absolute";
-    container.style.left = "-100px";
-    container.style.top = "-100px";
+    if (WebSocket.__isFlashLite()) {
+      container.style.left = "0px";
+      container.style.top = "0px";
+    } else {
+      container.style.left = "-100px";
+      container.style.top = "-100px";
+    }
     var holder = document.createElement("div");
     holder.id = "webSocketFlash";
     container.appendChild(holder);
     document.body.appendChild(container);
+    // See this article for hasPriority:
+    // http://help.adobe.com/en_US/as3/mobile/WS4bebcd66a74275c36cfb8137124318eebc6-7ffd.html
     swfobject.embedSWF(
-      WEB_SOCKET_SWF_LOCATION, "webSocketFlash", "8", "8", "9.0.0",
-      null, {bridgeName: "webSocket"}, null, null,
+      WEB_SOCKET_SWF_LOCATION, "webSocketFlash",
+      "1" /* width */, "1" /* height */, "9.0.0" /* SWF version */,
+      null, {bridgeName: "webSocket"}, {hasPriority: true, allowScriptAccess: "always"}, null,
       function(e) {
         if (!e.success) console.error("[WebSocket] swfobject.embedSWF failed");
       }
@@ -1620,7 +1891,14 @@ ASProxy.prototype =
     } else {
       WebSocket.__tasks.push(task);
     }
-  }
+  };
+  
+  WebSocket.__isFlashLite = function() {
+    if (!window.navigator || !window.navigator.mimeTypes) return false;
+    var mimeType = window.navigator.mimeTypes["application/x-shockwave-flash"];
+    if (!mimeType || !mimeType.enabledPlugin || !mimeType.enabledPlugin.filename) return false;
+    return mimeType.enabledPlugin.filename.match(/flashlite/i) ? true : false;
+  };
 
   // called from Flash
   window.webSocketLog = function(message) {

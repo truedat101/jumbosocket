@@ -38,6 +38,7 @@ Troubleshooting:
 Known Issues
 * Doesn't work in Firefox 4.0 (and maybe in 3.0).
 * Missing test cases ... I test manually.  I would like to try out Jasmine or one of these other test frameworks.
+* Not sure how to keep the versioning of socket.io up to date.  If you install Socket.IO from NPM, then you may get a later version.  Since Socket.IO documentation is very minimal outside of the code, it is tricky for me here.  I have to keep the client side library for socket.io up to date.  Probably worth hosting all of the socket client library version hosted on a CDN so that we can reference them by URL.
 
 Suggestions and Questions:
 * Post them on the google group.  I don't really know anything about socket.io and while proficient in node.js, I am not a JS developer by trade, so there are surely better and more efficient ways to code.  Send me your ideas.
