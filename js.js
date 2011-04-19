@@ -78,6 +78,7 @@ var NOT_FOUND_ERROR = '404 Error :(  I am sad.  \n';
 js.ROUTE_MAP = {}; // Populate this with the App Routes you set up
 js.RE_MAP = {}; // Populate this with the App Routes you set up
 js.address = '0.0.0.0'; // If you don't want this exposed on a network facing IP address, change to 'localhost'
+js.socket_handle;
 
 if (DEBUG) {
 	console.log("TURN OFF DEBUG for Production");
@@ -327,7 +328,9 @@ js.close = function () {
 
 js.listenSocketIO = function(servicehandler) {
 	var socket = io.listen(server);
+	js.socket_handle = socket;
 	socket.on('connection', servicehandler);
+	
 };
 
 js.getterer("/css/[\\w\\.\\-]+", function(req, res) {
@@ -597,8 +600,10 @@ js.listenSocketIO(function(client) {
 	client.on('connect', function() {
 		sys.puts('socket client.on connect at ' + (new Date().getTime()));
 	});
-
-	setTimeout(function() { // This could be a tweet stream, game status updates, robot messages
-		client.send("Ya'll ready for this");
-	}, 10000);
+	client.send('Right back at you there, client');
 });
+
+setInterval(function() { // This could be a tweet stream, game status updates, robot messages
+	sys.puts('sending something on the socket');
+	js.socket_handle.broadcast("Ya'll ready for this");
+}, 10000);
