@@ -589,8 +589,13 @@ js.get("/about", function(req, res) {
 js.listenHttpWS(js.CONFIG['HTTPWS_PORT'], js.address);
 
 js.listenSocketIO(function(client) {
+	// 
+	// PLUG IN YOUR OWN SOCKET.IO HANDLERS HERE
+	// This can be removed when you decide you want it to do something useful
+	//
 	client.on('message', function(data) {
 		sys.puts('socket client.on message data = ' + data + ' at ' + (new Date().getTime()));
+		client.send('Right back at you there, client');
 	});
 
 	client.on('disconnect', function() {
@@ -600,7 +605,7 @@ js.listenSocketIO(function(client) {
 	client.on('connect', function() {
 		sys.puts('socket client.on connect at ' + (new Date().getTime()));
 	});
-	client.send('Right back at you there, client');
+	
 });
 
 setInterval(function() { // This could be a tweet stream, game status updates, robot messages
