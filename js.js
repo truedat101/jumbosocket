@@ -330,6 +330,9 @@ js.listenSocketIO = function(servicehandler) {
 	var socket = io.listen(server);
 	js.socket_handle = socket;
 	socket.on('connection', servicehandler);
+	socket.on('clientDisconnect', function(client) {
+		sys.puts('socket on clientDisconnect');
+	});
 	
 };
 
