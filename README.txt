@@ -1,10 +1,11 @@
 Goal: The goal of Jumbosocket is to provide a boilerplate for quickstart of a node.js + socket.io app.  While this is easily possible in a few lines of JS code, it is nice to have a tested set of components to start using.  The HTML5 boilerplate is provided, along with CSS stubs, and a few JS scripts for a basic app, plus the needed JS libraries we all depend on for things.  With this setup, you should be able to get started coding in about 5 minutes or less.  This app doesn't do much, but you can at least prove your socket.io is working.  A secondary goal is that the code be short enough that you can walk through every line of the code an understand what the server is doing.  And in that spirit, it was not an objective that you have to go out and learn a framework to be productive, which can take days, weeks, months, or years.
 
 Installation:  You need the prerequisites: 
-* Node.js 0.2 x or great (not sure what Socket.io needs to work)
+* Node.js 0.2 x or greater (not sure what Socket.io needs to work)
 * NPM (recommended)
-* Socket.io (install via NPM or include the source so it is available in the require path)
+* Socket.io (install via NPM or include the source so it is available in the require path) - version < v0.6.2 (there is an issue with v0.7.2, probably API change)
 * Best bet is to run 'npm bundle' in the root project directory.  This will grab you the dependencies and drop them into your node_modules directory (see )
+
 Configure:
 * You can configure js.js in the config section (set host and port)
 * If you plan to use Amazon AWS SimpleDB, you will need to provide your AWS Access Key ID and Secret Access Key
@@ -39,6 +40,7 @@ Known Issues
 * Doesn't work in Firefox 4.0 (and maybe in 3.0).
 * Missing test cases ... I test manually.  I would like to try out Jasmine or one of these other test frameworks.
 * Not sure how to keep the versioning of socket.io up to date.  If you install Socket.IO from NPM, then you may get a later version.  Since Socket.IO documentation is very minimal outside of the code, it is tricky for me here.  I have to keep the client side library for socket.io up to date.  Probably worth hosting all of the socket client library version hosted on a CDN so that we can reference them by URL.
+* Probably some warnings from NPM.  I can't keep up with the rate of node=innovation.
 
 Suggestions and Questions:
 * Post them on the google group.  I don't really know anything about socket.io and while proficient in node.js, I am not a JS developer by trade, so there are surely better and more efficient ways to code.  Send me your ideas.
