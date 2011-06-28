@@ -34,14 +34,14 @@ var js = exports;
   * Attributions
   */
 /** 
-  js.js a small server for big ideas, offering a small template starter project, inspired by fu.js and utilizing socket.io 
+  js.js a small server for big ideas, offering a small template starter project, 
+   
+  - fu.js: from the node_chat demo, source of major inspiration
+  - socket.io: to handle socket oriented communication
+  - node.js: for the runtime
  */
 
-/**
- * Use paths relative to node_modules directory and not global module space.
- * XXX Do I need to do this??
- */
-// require.paths.unshift('./node_modules');
+
 
 /** 
  * Imports
@@ -51,7 +51,7 @@ var io = require('socket.io'),
 	sys = require('sys'),
 	assert = require('assert'), 
 	fs = require('fs'),
-	url = require('url'),
+	url = require('url');
 	
 
 /** 
@@ -64,6 +64,7 @@ js.CONFIG = {
 	'HTTPWS_PORT':8000,
 	'VERSION_TAG':'0.1.0',
 	'VERSION_DESCRIPTION':'Put your app description here',
+	'SLIDE_DIR':'./'
 };
 
 var INTERNAL_SERVER_ERROR = 'Internal Server Error!  Oh pshaw\n';
@@ -77,6 +78,7 @@ js.ROUTE_MAP = {}; // Populate this with the App Routes you set up
 js.RE_MAP = {}; // Populate this with the App Routes you set up
 js.address = '0.0.0.0'; // If you don't want this exposed on a network facing IP address, change to 'localhost'
 js.socket_handle;
+js.channels = {};
 
 if (DEBUG) {
 	console.log("TURN OFF DEBUG for Production");
@@ -100,6 +102,7 @@ js.mime = {
   },
 
   // List of most common mime-types, stolen from Rack.
+  // XXX: Can we refactor this out, replace with an NPM module or something more compact?
   TYPES : { ".3gp"   : "video/3gpp"
           , ".a"     : "application/octet-stream"
           , ".ai"    : "application/postscript"
@@ -326,13 +329,16 @@ js.close = function () {
 
 js.listenSocketIO = function(servicehandler) {
 	var socket = io.listen(server);
-	js.socket_handle = socket;
 	socket.on('connection', servicehandler);
 	socket.on('clientDisconnect', function(client) {
 		sys.puts('socket on clientDisconnect');
 	});
-	
+	js.socket_handle = socket;
 };
+
+js.getterer("/iui/[\\w\\.\\-]+", function(req, res) {
+	return js.staticHandler("." + url.parse(req.url).pathname)(req, res);
+});
 
 js.getterer("/css/[\\w\\.\\-]+", function(req, res) {
 	return js.staticHandler("." + url.parse(req.url).pathname)(req, res);
@@ -509,6 +515,9 @@ js.getterer("/helloworldly/[\\w\\.\\-]+", function(req, res) {
 	res.end();
 });
 
+js.get("/presenter", js.staticHandler("./presenter.html"));
+js.get("/viewer", js.staticHandler("./viewer.html"));
+
 js.get("/about", function(req, res) {
 	var body = js.CONFIG['VERSION_TAG'] + ': ' + js.CONFIG['VERSION_DESCRIPTION'];
 	res.writeHead(200, {
@@ -527,19 +536,68 @@ js.listenSocketIO(function(client) {
 	// PLUG IN YOUR OWN SOCKET.IO HANDLERS HERE
 	// This can be removed when you decide you want it to do something useful
 	//
+	
+	// 
+	// Request the channel from the client - after we have that we can register the client
+	// 
+	
+	//
+	// Message format:
+	// {
+	// 		msg: <message type>@channel
+	// 		op: <operation name>
+	// 		payload: <data for this this operation>
+	// } 
+	client.send({
+		msg: 'session',
+		op: 'handshake',
+		payload:'nada'
+	});
+	sys.puts('adding client socket session id: ' + client.sessionId + ' on ');
+	
+	//
+	// message types: session, comms, glide
+	// session operations: handshake, start, stop, 
+	// comms operations: chat, privatechat
+	// glide operations: next, prev, goto, first, last, autorewind, auto
+	//
 	client.on('message', function(data) {
-		sys.puts('socket client.on message data = ' + data + ' at ' + (new Date().getTime()));
-		client.send('Right back at you there, client');
-	});
-
-	client.on('disconnect', function() {
-		sys.puts('socket client.on disconnect at ' + (new Date().getTime()));
-	});
-	
-	client.on('connect', function() {
-		sys.puts('socket client.on connect at ' + (new Date().getTime()));
-	});
-	
+		if (data) {
+			var req = data.msg.split('@');
+			var msg = req[0];
+			var channelname = req[1];
+			var slidename = "home";
+			var inboundSessionId = client.sessionId;
+			sys.puts('socket client.on message data = "' + JSON.stringify(data) + '" at ' + (new Date().getTime()));
+			if (msg == 'session') {
+				if (data.op == 'handshake') {
+					if (js.channels[channelname]) { // Grab the channel info from the client
+						js.channels[channelname] = client.sessionId;
+					} else { // And if no channel exists, create the empty list
+						js.channels[channelname] = []; 
+						js.channels[channelname].push(client.sessionId) // Just do this in a seperate step for clarity
+					}
+				}
+			} else if (msg == 'glide') {
+				if ((data.op == 'next') || (data.op == 'prev')) {
+					slidename = data.payload;
+					var channel = js.channels[channelname];
+					var sessionId;
+					
+					for (var i = 0; i < channel.length; i++) {
+						sessionId = channel[i];
+						if (inboundSessionId != sessionId) { // Don't send the message to the caller
+							js.socket_handle.clients[sessionId].send({
+								msg: 'glide',
+								op: 'goto',
+								payload: slidename
+							});
+						}
+					}
+				}
+			}
+ 		} // Ignore empty data messages
+	});	
 });
 
 setInterval(function() { // This could be a tweet stream, game status updates, robot messages

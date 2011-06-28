@@ -4,10 +4,11 @@ Installation:  You need the prerequisites:
 * Node.js 0.2 x or greater (not sure what Socket.io needs to work)
 * NPM (recommended)
 * Socket.io (install via NPM or include the source so it is available in the require path) - version < v0.6.2 (there is an issue with v0.7.2, probably API change)
+* Angular (nothing to add ... we get it of the CDN)
 * Best bet is to run 'npm bundle' in the root project directory.  This will grab you the dependencies and drop them into your node_modules directory (see )
 
 Configure:
-* You can configure js.js in the config section (set host and port)
+* You can configure js.js in the config section (set host and port, and add your own conf here).  There is a better way to do config, but you probably want to choose the config mechanism that suits your tastes.
 
 To run:
 
@@ -29,6 +30,8 @@ Demo Routes:
 		/helloworld - A basic static html page served up by node
 		/helloworldly/<some path> - A basic static html page using the route filtering feature of this server.  It will print <some path> to the screen.
 		/about - about this demo
+		/presenter - a simple group presenter tool
+		/viewer - a simple group presentation viewer 
 		/ - A simple socket.io demo showing basic messaging process
 		
 Troubleshooting:
