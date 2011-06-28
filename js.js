@@ -64,8 +64,6 @@ js.CONFIG = {
 	'HTTPWS_PORT':8000,
 	'VERSION_TAG':'0.1.0',
 	'VERSION_DESCRIPTION':'Put your app description here',
-	'AWS_KEY_ID':'INSERT_YOUR_KEY',
-	'AWS_SECRET_KEY':'INSERT_YOUR_KEY',
 };
 
 var INTERNAL_SERVER_ERROR = 'Internal Server Error!  Oh pshaw\n';
@@ -510,73 +508,6 @@ js.getterer("/helloworldly/[\\w\\.\\-]+", function(req, res) {
 	res.write(body);
 	res.end();
 });
-/*
-js.getterer("/simpledbdatadump/[\\w\\.\\-]+", function(req, res) {
-	var route = url.parse(req.url).pathname.split('/')[2];
-	var body = 'simpledbdatadump result: ';
-	sys.puts('simpledbdatadump on domain ' + route + ' using select statement: select * from ' + route);
-	var sdb = new simpledb.SimpleDB(
-	  {keyid:js.CONFIG['AWS_KEY_ID'],secret:js.CONFIG['AWS_SECRET_KEY']},
-	  simpledb.debuglogger
-	);
-	sdb.select("select * from " + route,function( error, result, meta ){	
-	  if( error ) {
-	    console.log('select failed: '+error.Message )
-		body += error.Message
-	  }
-	  else {
-	    // do stuff with result, an array of domain names
-		console.log('select result: ' + JSON.stringify(result));
-		if (Array.isArray(result) &&  (1 <= result.length)) {
-			body += JSON.stringify(result);
-		} else {
-			body += "No results";
-		}
-		
-		console.log('simpledbdatadump succeeded: '+ body)
-	  }
-	  res.writeHead(200, {
-	  	'Content-Length': body.length,
-		'Content-Type': 'text/plain'
-	  });
-		res.write(body);
-		res.end();
-	});
-});
-
-js.get("/simpledblistdomains", function(req, res) {
-	var body = 'simpldblookup result: ';
-	sys.puts('simpledblookup');
-	var sdb = new simpledb.SimpleDB(
-	  {keyid:js.CONFIG['AWS_KEY_ID'],secret:js.CONFIG['AWS_SECRET_KEY']},
-	  simpledb.debuglogger
-	);
-	sdb.listDomains( function( error, result, meta ) {
-	  if( error ) {
-	    console.log('listDomains failed: '+error.Message )
-		body += error.Message
-	  }
-	  else {
-	    // do stuff with result, an array of domain names
-		console.log('listDomains result: ' + result);
-		if (Array.isArray(result) &&  (1 <= result.length)) {
-			for (var i = 0; i < result.length; i++)
-				body += result[i] + ',';
-		} else {
-			body += "No results";
-		}
-		
-		console.log('listDomains succeeded: '+ body)
-	  }
-	  res.writeHead(200, {
-	  	'Content-Length': body.length,
-		'Content-Type': 'text/plain'
-	  });
-		res.write(body);
-		res.end();
-	});
-});
-*/
 
 js.get("/about", function(req, res) {
 	var body = js.CONFIG['VERSION_TAG'] + ': ' + js.CONFIG['VERSION_DESCRIPTION'];
