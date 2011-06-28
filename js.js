@@ -557,22 +557,39 @@ js.listenSocketIO(function(client) {
 	
 	//
 	// message types: session, comms, glide
-	// session operations: handshake, start, stop, 
+	// session operations: handshake, join, part, start, stop, 
 	// comms operations: chat, privatechat
 	// glide operations: next, prev, goto, first, last, autorewind, auto
 	//
 	client.on('message', function(data) {
 		if (data) {
+			sys.puts('socket client.on message data = ' + JSON.stringify(data) + '  at ' + (new Date().getTime()));
 			var req = data.msg.split('@');
 			var msg = req[0];
 			var channelname = req[1];
 			var slidename = "home";
 			var inboundSessionId = client.sessionId;
-			sys.puts('socket client.on message data = "' + JSON.stringify(data) + '" at ' + (new Date().getTime()));
 			if (msg == 'session') {
 				if (data.op == 'handshake') {
 					if (js.channels[channelname]) { // Grab the channel info from the client
-						js.channels[channelname] = client.sessionId;
+						js.channels[channelname].push(client.sessionId); //
+					} else { // And if no channel exists, create the empty list
+						js.channels[channelname] = []; 
+						js.channels[channelname].push(client.sessionId) // Just do this in a seperate step for clarity
+					}
+				} else if (data.op == 'join') {
+					if (js.channels[channelname]) { // Grab the channel info from the client
+						//
+						// Verify they have a valid session
+						//
+						
+						//
+						// Grab the user nickname
+						//
+	
+						//
+						// Broadcast Join to all clients
+						//
 					} else { // And if no channel exists, create the empty list
 						js.channels[channelname] = []; 
 						js.channels[channelname].push(client.sessionId) // Just do this in a seperate step for clarity

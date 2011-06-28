@@ -49,6 +49,7 @@ $(document).ready(function() {
 		if (data) {
 			if (data.msg == 'session') {
 				if (data.op == 'handshake') {
+					console.log("handshake performed");
 					socket.send({msg: 'session@' + getChannel(), op: 'handshake', payload: 'hello'});
 				}
 			}
