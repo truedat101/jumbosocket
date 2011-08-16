@@ -1,12 +1,11 @@
 $(document).ready(function() {
-	var socket = new io.Socket('localhost', {
-	}); 
+	// var socket = io.connect('localhost', { }); 
+	var socket = io.connect();
 	var connectcount = 0;
 	var disconnectcount = 0;
 	var messagecount = 0;
 	var sentmessagecount = 0;
 
-	socket.connect();
 	socket.on('connect', function(){
 		connectcount = connectcount + 1;
 		$('#connectstats').text(connectcount);
@@ -15,7 +14,8 @@ $(document).ready(function() {
 		disconnectcount = disconnectcount + 1;
 		$('#disconnectstats').text(disconnectcount);
 	});
-	socket.on('message', function(){
+	socket.on('message', function(message){
+		console.log(message);
 		messagecount = messagecount + 1;
 		$('#messagestats').text(messagecount);
 	});

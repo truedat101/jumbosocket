@@ -46,7 +46,7 @@ var js = exports;
 /** 
  * Imports
  */
-var io = require('socket.io'),
+var si07 = require('socket.io'),
 	createServer = require('http').createServer,
 	sys = require('sys'),
 	assert = require('assert'), 
@@ -77,8 +77,8 @@ var NOT_FOUND_ERROR = '404 Error :(  I am sad.  \n';
 js.ROUTE_MAP = {}; // Populate this with the App Routes you set up
 js.RE_MAP = {}; // Populate this with the App Routes you set up
 js.address = '0.0.0.0'; // If you don't want this exposed on a network facing IP address, change to 'localhost'
-js.socket_handle;
-js.channels = {};
+js.socket_handle = undefined;
+js.channels = {}; // XXX Should move to using socket.io namespaces
 
 if (DEBUG) {
 	console.log("TURN OFF DEBUG for Production");
@@ -314,9 +314,9 @@ js.listenHttpWS = function (port, host) {
 		getNetworkIP(function (error, ip) {
 		    if (!error) {
 				js.address = ip;
-				console.log('Started server on IP address: ', js.address);
+				sys.puts('Started server on IP address: ', js.address);
 		    } else {
-				console.log('error:', error);
+				sys.puts('error:', error);
 			}
 		}, false); 
 	  }
@@ -328,29 +328,27 @@ js.close = function () {
 };
 
 js.listenSocketIO = function(servicehandler) {
-	var socket = io.listen(server);
-	socket.on('connection', servicehandler);
-	socket.on('clientDisconnect', function(client) {
-		sys.puts('socket on clientDisconnect');
-	});
-	js.socket_handle = socket;
+	if (server) {
+		// var socket = io.listen('http://' + server.address().address + ":" + server.address().port.toString());
+		// var socket = io.connect('http://localhost:8000');
+		require('socket.io').listen(server).on('connection', servicehandler);
+		/* var s = si07.listen(server);
+		js.socket_handle = s;
+		js.socket_handle.on('connection', servicehandler);
+
+		/* s.on('connection', function(client) {
+			sys.puts('socket on connection');
+		}); */
+		/* 
+		js.socket_handle.on('clientDisconnect', function(client) {
+			sys.puts('socket on clientDisconnect');
+		});
+		*/
+		sys.puts("Set js.socket_handle");
+	} else {
+		sys.err("server global is not defined");
+	}
 };
-
-js.getterer("/iui/[\\w\\.\\-]+", function(req, res) {
-	return js.staticHandler("." + url.parse(req.url).pathname)(req, res);
-});
-
-js.getterer("/css/[\\w\\.\\-]+", function(req, res) {
-	return js.staticHandler("." + url.parse(req.url).pathname)(req, res);
-});
-
-js.getterer("/js/[\\w\\.\\-]+", function(req, res) {
-	return js.staticHandler("." + url.parse(req.url).pathname)(req, res);
-});
-
-js.getterer("/images/[\\w\\.\\-]+", function(req, res) {
-	return js.staticHandler("." + url.parse(req.url).pathname)(req, res);
-});
 
 var server = createServer(function(req, res) {
 		try {
@@ -387,11 +385,29 @@ var server = createServer(function(req, res) {
 
 			handler(req, res);
 		} catch(e) {
-			console.log("Caught a server-side Node.js exception.  Ouch!  Here's what happened: " + e.name + ". Error message: " + e.message);
+			sys.err("Caught a server-side Node.js exception.  Ouch!  Here's what happened: " + e.name + ". Error message: " + e.message);
 			internalServerError(req, res);
 		}
 
 });
+
+
+js.getterer("/iui/[\\w\\.\\-]+", function(req, res) {
+	return js.staticHandler("." + url.parse(req.url).pathname)(req, res);
+});
+
+js.getterer("/css/[\\w\\.\\-]+", function(req, res) {
+	return js.staticHandler("." + url.parse(req.url).pathname)(req, res);
+});
+
+js.getterer("/js/[\\w\\.\\-]+", function(req, res) {
+	return js.staticHandler("." + url.parse(req.url).pathname)(req, res);
+});
+
+js.getterer("/images/[\\w\\.\\-]+", function(req, res) {
+	return js.staticHandler("." + url.parse(req.url).pathname)(req, res);
+});
+
 
 
 /**
@@ -536,7 +552,7 @@ js.listenSocketIO(function(client) {
 	// PLUG IN YOUR OWN SOCKET.IO HANDLERS HERE
 	// This can be removed when you decide you want it to do something useful
 	//
-	
+	console.log("*********** listenSocketIO handler ******************");	
 	// 
 	// Request the channel from the client - after we have that we can register the client
 	// 
@@ -613,11 +629,17 @@ js.listenSocketIO(function(client) {
 					}
 				}
 			}
- 		} // Ignore empty data messages
+ 		} else { sys.err("empty message"); } // Ignore empty data messages
 	});	
 });
 
+// XXX This dies with socket.io v0.7 .  Handling of broadcast is different.
 setInterval(function() { // This could be a tweet stream, game status updates, robot messages
 	sys.puts('sending something on the socket');
-	js.socket_handle.broadcast("Ya'll ready for this");
+	if (js.socket_handle) {
+		// console.log(js.socket_handle);
+		// js.socket_handle.broadcast.emit("Ya'll ready for this");
+		// js.socket_handle.sockets.broadcast.emit("Ya'll ready for this");
+		// js.socket_handle.sockets.send("Ya'll ready for this");
+	}
 }, 10000);
