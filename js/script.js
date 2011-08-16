@@ -22,7 +22,7 @@ $(document).ready(function() {
 
 	$('#send').click(function() {
 		// socket.send("{msg: 'session@default' , op: 'handshake', payload: 'hello'}");
-		socket.send({'msg': 'session@default' , 'op': 'handshake', 'payload': 'hello'});
+		socket.json.send({'msg': 'session@default' , 'op': 'handshake', 'payload': 'hello'});
 		sentmessagecount = sentmessagecount + 1;
 		$('#sentmessagestats').text(sentmessagecount);
 		return false;
