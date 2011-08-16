@@ -46,8 +46,7 @@ var js = exports;
 /** 
  * Imports
  */
-var si07 = require('socket.io'),
-	createServer = require('http').createServer,
+var createServer = require('http').createServer,
 	sys = require('sys'),
 	assert = require('assert'), 
 	fs = require('fs'),
@@ -77,7 +76,6 @@ var NOT_FOUND_ERROR = '404 Error :(  I am sad.  \n';
 js.ROUTE_MAP = {}; // Populate this with the App Routes you set up
 js.RE_MAP = {}; // Populate this with the App Routes you set up
 js.address = '0.0.0.0'; // If you don't want this exposed on a network facing IP address, change to 'localhost'
-js.socket_handle = undefined;
 js.channels = {}; // XXX Should move to using socket.io namespaces
 
 if (DEBUG) {
@@ -331,20 +329,21 @@ js.listenSocketIO = function(servicehandler) {
 	if (server) {
 		// var socket = io.listen('http://' + server.address().address + ":" + server.address().port.toString());
 		// var socket = io.connect('http://localhost:8000');
-		require('socket.io').listen(server).on('connection', servicehandler);
 		/* var s = si07.listen(server);
 		js.socket_handle = s;
-		js.socket_handle.on('connection', servicehandler);
-
-		/* s.on('connection', function(client) {
+		*/
+		io.sockets.on('connection', servicehandler);
+		/*
+		io.sockets.on('connection', function(client) {
 			sys.puts('socket on connection');
-		}); */
+		}); 
+		*/
 		/* 
 		js.socket_handle.on('clientDisconnect', function(client) {
 			sys.puts('socket on clientDisconnect');
 		});
 		*/
-		sys.puts("Set js.socket_handle");
+		sys.puts("Set connection to socket.io");
 	} else {
 		sys.err("server global is not defined");
 	}
@@ -546,6 +545,7 @@ js.get("/about", function(req, res) {
 
 
 js.listenHttpWS(js.CONFIG['HTTPWS_PORT'], js.address);
+var io = require('socket.io').listen(server);
 
 js.listenSocketIO(function(client) {
 	// 
