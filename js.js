@@ -569,7 +569,7 @@ js.listenSocketIO(function(client) {
 		op: 'handshake',
 		payload:'nada'
 	});
-	sys.puts('adding client socket session id: ' + client.sessionId + ' on ');
+	sys.puts('adding client socket session id: ' + client.id + ' on ');
 	
 	//
 	// message types: session, comms, glide
@@ -580,18 +580,19 @@ js.listenSocketIO(function(client) {
 	client.on('message', function(data) {
 		if (data) {
 			sys.puts('socket client.on message data = ' + JSON.stringify(data) + '  at ' + (new Date().getTime()));
+			console.log(data.msg);
 			var req = data.msg.split('@');
 			var msg = req[0];
 			var channelname = req[1];
 			var slidename = "home";
-			var inboundSessionId = client.sessionId;
+			var inboundSessionId = client.id;
 			if (msg == 'session') {
 				if (data.op == 'handshake') {
 					if (js.channels[channelname]) { // Grab the channel info from the client
-						js.channels[channelname].push(client.sessionId); //
+						js.channels[channelname].push(client.id); //
 					} else { // And if no channel exists, create the empty list
 						js.channels[channelname] = []; 
-						js.channels[channelname].push(client.sessionId) // Just do this in a seperate step for clarity
+						js.channels[channelname].push(client.id) // Just do this in a seperate step for clarity
 					}
 				} else if (data.op == 'join') {
 					if (js.channels[channelname]) { // Grab the channel info from the client
@@ -608,7 +609,7 @@ js.listenSocketIO(function(client) {
 						//
 					} else { // And if no channel exists, create the empty list
 						js.channels[channelname] = []; 
-						js.channels[channelname].push(client.sessionId) // Just do this in a seperate step for clarity
+						js.channels[channelname].push(client.id) // Just do this in a seperate step for clarity
 					}
 				}
 			} else if (msg == 'glide') {
@@ -636,10 +637,10 @@ js.listenSocketIO(function(client) {
 // XXX This dies with socket.io v0.7 .  Handling of broadcast is different.
 setInterval(function() { // This could be a tweet stream, game status updates, robot messages
 	sys.puts('sending something on the socket');
-	if (js.socket_handle) {
+	if (io) { // XXX Shouldn't this exist?
 		// console.log(js.socket_handle);
-		// js.socket_handle.broadcast.emit("Ya'll ready for this");
+		// io.sockets.broadcast.emit("Ya'll ready for this");
 		// js.socket_handle.sockets.broadcast.emit("Ya'll ready for this");
-		// js.socket_handle.sockets.send("Ya'll ready for this");
+		io.sockets.send("Ya'll ready for this");
 	}
 }, 10000);
