@@ -78,7 +78,7 @@ js.RE_MAP = {}; // Populate this with the App Routes you set up
 js.address = '0.0.0.0'; // If you don't want this exposed on a network facing IP address, change to 'localhost'
 js.channels = {}; // XXX Should move to using socket.io namespaces
 js.DEFAULT_JS_HANDLER = defaultJSHandler;
-js.js_handler;
+js.js_handler; // Set this to some handler you want to use for Socket.IO, otherwise, default to defaultJSHandler
 
 if (DEBUG) {
 	console.log("TURN OFF DEBUG for Production");
@@ -349,7 +349,7 @@ var server = createServer(function(req, res) {
 				handler = js.ROUTE_MAP[url.parse(req.url).pathname];
 				if (!handler) {
 					for (var expr in js.RE_MAP) {
-						sys.puts('Test ' + req.url + ' against expr: ' + expr);
+						// sys.puts('Test ' + req.url + ' against expr: ' + expr);
 						if (js.RE_MAP[expr] && js.RE_MAP[expr].test(url.parse(req.url).pathname)) {
 							handler = js.ROUTE_MAP[js.RE_MAP[expr].toString()];
 							break;
@@ -496,35 +496,11 @@ function notFound(req, res) {
   // sys.log(sys.inspect(getMap, true, null)); // XXX Dump the getMap to the logs
   res.end();
 }
+
 /**
   * JumboSocket Service Handler - Define your App Here
   */
 js.get("/", js.staticHandler("index.html"));
-
-js.get("/helloworld", function(req, res) {
-	var body = 'hello world';
-	res.writeHead(200, {
-	  'Content-Length': body.length,
-	  'Content-Type': 'text/plain'
-	});
-	res.write(body);
-	res.end();
-});
-
-js.getterer("/helloworldly/[\\w\\.\\-]+", function(req, res) {
-	var route = url.parse(req.url).pathname.split('/')[2];
-	var body = 'helloworldy on route ' + route;
-	sys.puts('helloworldly');	
-	res.writeHead(200, {
-	  'Content-Length': body.length,
-	  'Content-Type': 'text/plain'
-	});
-	res.write(body);
-	res.end();
-});
-
-js.get("/presenter", js.staticHandler("./presenter.html"));
-js.get("/viewer", js.staticHandler("./viewer.html"));
 
 js.get("/about", function(req, res) {
 	var body = js.CONFIG['VERSION_TAG'] + ': ' + js.CONFIG['VERSION_DESCRIPTION'];
@@ -537,12 +513,11 @@ js.get("/about", function(req, res) {
 });
 
 
-js.listenHttpWS(js.CONFIG['HTTPWS_PORT'], js.address);
 var io = require('socket.io').listen(server);
+// Setup default handler if needed
 if (!js.js_handler) {
 	js.js_handler = js.DEFAULT_JS_HANDLER;
 }
-js.listenSocketIO(js.js_handler);
 
 /**
  * This is a basic handler.  XXX Clean it up.  It's messy and not clear what is the purpose.
