@@ -529,84 +529,11 @@ function defaultJSHandler(client) {
 	// PLUG IN YOUR OWN SOCKET.IO HANDLERS HERE
 	// This can be removed when you decide you want it to do something useful
 	//
-	console.log("*********** listenSocketIO handler ******************");	
-	// 
-	// Request the channel from the client - after we have that we can register the client
-	// 
-	
-	//
-	// Message format:
-	// {
-	// 		msg: <message type>@channel
-	// 		op: <operation name>
-	// 		payload: <data for this this operation>
-	// } 
-	client.send({
-		msg: 'session',
-		op: 'handshake',
-		payload:'nada'
-	});
-	sys.puts('adding client socket session id: ' + client.id + ' on ');
-	
-	//
-	// message types: session, comms, glide
-	// session operations: handshake, join, part, start, stop, 
-	// comms operations: chat, privatechat
-	// glide operations: next, prev, goto, first, last, autorewind, auto
-	//
+	console.log("*********** default listenSocketIO handler ******************");	
 	client.on('message', function(data) {
 		if (data) {
 			sys.puts('socket client.on message data = ' + JSON.stringify(data) + '  at ' + (new Date().getTime()));
 			io.sockets.send("pong - " + JSON.stringify(data));
-			var req = data.msg.split('@');
-			var msg = req[0];
-			var channelname = req[1];
-			var slidename = "home";
-			var inboundSessionId = client.id;
-			if (msg == 'session') {
-				if (data.op == 'handshake') {
-					if (js.channels[channelname]) { // Grab the channel info from the client
-						js.channels[channelname].push(client.id); //
-					} else { // And if no channel exists, create the empty list
-						js.channels[channelname] = []; 
-						js.channels[channelname].push(client.id) // Just do this in a seperate step for clarity
-					}
-				} else if (data.op == 'join') {
-					if (js.channels[channelname]) { // Grab the channel info from the client
-						//
-						// Verify they have a valid session
-						//
-						
-						//
-						// Grab the user nickname
-						//
-	
-						//
-						// Broadcast Join to all clients
-						//
-					} else { // And if no channel exists, create the empty list
-						js.channels[channelname] = []; 
-						js.channels[channelname].push(client.id) // Just do this in a seperate step for clarity
-					}
-				}
-			} else if (msg == 'glide') {
-				if ((data.op == 'next') || (data.op == 'prev')) {
-					slidename = data.payload;
-					var channel = js.channels[channelname];
-					var sessionId;
-					
-					for (var i = 0; i < channel.length; i++) {
-						sessionId = channel[i];
-						if (inboundSessionId != sessionId) { // Don't send the message to the caller
-							js.socket_handle.clients[sessionId].send({
-								msg: 'glide',
-								op: 'goto',
-								payload: slidename
-							});
-						}
-					}
-				}
-			}
  		} else { sys.err("empty message"); } // Ignore empty data messages
 	});	
 	// XXX This dies with socket.io v0.7 .  Handling of broadcast is different.
