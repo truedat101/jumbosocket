@@ -580,7 +580,7 @@ js.listenSocketIO(function(client) {
 	client.on('message', function(data) {
 		if (data) {
 			sys.puts('socket client.on message data = ' + JSON.stringify(data) + '  at ' + (new Date().getTime()));
-			console.log(data.msg);
+			io.sockets.send("pong - " + JSON.stringify(data));
 			var req = data.msg.split('@');
 			var msg = req[0];
 			var channelname = req[1];
