@@ -77,6 +77,8 @@ js.ROUTE_MAP = {}; // Populate this with the App Routes you set up
 js.RE_MAP = {}; // Populate this with the App Routes you set up
 js.address = '0.0.0.0'; // If you don't want this exposed on a network facing IP address, change to 'localhost'
 js.channels = {}; // XXX Should move to using socket.io namespaces
+js.DEFAULT_JS_HANDLER = defaultJSHandler;
+js.js_handler;
 
 if (DEBUG) {
 	console.log("TURN OFF DEBUG for Production");
@@ -327,23 +329,14 @@ js.close = function () {
 
 js.listenSocketIO = function(servicehandler) {
 	if (server) {
-		// var socket = io.listen('http://' + server.address().address + ":" + server.address().port.toString());
-		// var socket = io.connect('http://localhost:8000');
-		/* var s = si07.listen(server);
-		js.socket_handle = s;
-		*/
-		io.sockets.on('connection', servicehandler);
-		/*
-		io.sockets.on('connection', function(client) {
-			sys.puts('socket on connection');
-		}); 
-		*/
-		/* 
-		js.socket_handle.on('clientDisconnect', function(client) {
-			sys.puts('socket on clientDisconnect');
-		});
-		*/
-		sys.puts("Set connection to socket.io");
+		try { // Try not to let this fall out the bottom if we have an issue with the service handler implementation or any funky stuff with socket.io
+			io.sockets.on('connection', servicehandler);
+			sys.puts("Set connection to socket.io");
+		} catch(e) {
+                        sys.err("Caught a server-side Node.js exception.  Ouch!  Here's what happened: " + e.name + ". Error message: " + e.message);
+                        internalServerError(req, res);
+                }
+
 	} else {
 		sys.err("server global is not defined");
 	}
@@ -546,8 +539,17 @@ js.get("/about", function(req, res) {
 
 js.listenHttpWS(js.CONFIG['HTTPWS_PORT'], js.address);
 var io = require('socket.io').listen(server);
+if (!js.js_handler) {
+	js.js_handler = js.DEFAULT_JS_HANDLER;
+}
+js.listenSocketIO(js.js_handler);
 
-js.listenSocketIO(function(client) {
+/**
+ * This is a basic handler.  XXX Clean it up.  It's messy and not clear what is the purpose.
+ * For now, just use it as is.  It pongs back messages.
+ *
+ */
+function defaultJSHandler(client) {
 	// 
 	// PLUG IN YOUR OWN SOCKET.IO HANDLERS HERE
 	// This can be removed when you decide you want it to do something useful
@@ -632,7 +634,7 @@ js.listenSocketIO(function(client) {
 			}
  		} else { sys.err("empty message"); } // Ignore empty data messages
 	});	
-});
+}
 
 // XXX This dies with socket.io v0.7 .  Handling of broadcast is different.
 setInterval(function() { // This could be a tweet stream, game status updates, robot messages
