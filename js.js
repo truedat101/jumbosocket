@@ -634,15 +634,12 @@ function defaultJSHandler(client) {
 			}
  		} else { sys.err("empty message"); } // Ignore empty data messages
 	});	
+	// XXX This dies with socket.io v0.7 .  Handling of broadcast is different.
+	setInterval(function() { // This could be a tweet stream, game status updates, robot messages
+		sys.puts('sending something on the socket');
+		if (io) { // XXX Shouldn't this exist?
+			io.sockets.send("Ya'll ready for this");
+		}
+	}, 10000);
 }
 
-// XXX This dies with socket.io v0.7 .  Handling of broadcast is different.
-setInterval(function() { // This could be a tweet stream, game status updates, robot messages
-	sys.puts('sending something on the socket');
-	if (io) { // XXX Shouldn't this exist?
-		// console.log(js.socket_handle);
-		// io.sockets.broadcast.emit("Ya'll ready for this");
-		// js.socket_handle.sockets.broadcast.emit("Ya'll ready for this");
-		io.sockets.send("Ya'll ready for this");
-	}
-}, 10000);
