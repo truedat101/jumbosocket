@@ -514,6 +514,8 @@ js.get("/about", function(req, res) {
 
 
 var io = require('socket.io').listen(server);
+js.io = io; // XXX Funky, but I don't see a clean way require the io namespace inside the application wrapper.
+
 // Setup default handler if needed
 if (!js.js_handler) {
 	js.js_handler = js.DEFAULT_JS_HANDLER;
