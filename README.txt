@@ -3,8 +3,7 @@ Goal: The goal of Jumbosocket is to provide a boilerplate for quickstart of a no
 Installation:  You need the prerequisites: 
 * Node.js 0.2 x or greater (not sure what Socket.io needs to work)
 * NPM (recommended)
-* Socket.io (install via NPM or include the source so it is available in the require path) - version < v0.6.2 (there is an issue with v0.7.2, probably API change)
-* Angular (nothing to add ... we get it of the CDN)
+* Socket.io (install via NPM or include the source so it is available in the require path) - use v0.7x .  
 * Best bet is to run 'npm bundle' in the root project directory.  This will grab you the dependencies and drop them into your node_modules directory (see )
 
 Configure:
@@ -12,7 +11,7 @@ Configure:
 
 To run:
 
-node js.js
+node js.js to run a default service (doesn't do much).
 
 If you are actively developing, install nodemon:
 npm install nodemon
@@ -21,6 +20,9 @@ and then run with:
 
 nodemon js.js
 
+A better way: Create an server wrapper to add your own routes and socket.io handler.  
+
+node examplejs-server.js
 
 Development:
 If you want to build on top of this, the best thing is to create a server.js file and require('./js.js');   Then you can just define your routes and any utility methods inside of server.js.  As I have recommended above, use nodemon or similar to speed up your dev cycles.  
