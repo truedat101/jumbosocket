@@ -33,6 +33,7 @@ var js =  require("./js.js"),
 
 
 js.get("/ccn4bnode", js.staticHandler("ccn4bnode.html"));
+js.get("/bootstrap", js.staticHandler("bootstrap.html"));
 
 js.get("/test", function(req, res) {
         var body = 'Test';
@@ -56,6 +57,41 @@ js.getterer("/ccn/[\\w\\.\\-]+", function(req, res) {
         res.end();
 });
 
+js.getterer("/cs/[\\w\\.\\-]+", function(req, res) {
+        var route = url.parse(req.url).pathname.split('/')[2];
+        var body = 'ccn on route ' + route;
+        sys.puts('ccn');
+        res.writeHead(200, {
+          'Content-Length': body.length,
+          'Content-Type': 'text/plain'
+        });
+        res.write(body);
+        res.end();
+});
+
+js.getterer("/fib/[\\w\\.\\-]+", function(req, res) {
+        var route = url.parse(req.url).pathname.split('/')[2];
+        var body = 'ccn on route ' + route;
+        sys.puts('ccn');
+        res.writeHead(200, {
+          'Content-Length': body.length,
+          'Content-Type': 'text/plain'
+        });
+        res.write(body);
+        res.end();
+});
+
+js.getterer("/pit/[\\w\\.\\-]+", function(req, res) {
+        var route = url.parse(req.url).pathname.split('/')[2];
+        var body = 'ccn on route ' + route;
+        sys.puts('ccn');
+        res.writeHead(200, {
+          'Content-Length': body.length,
+          'Content-Type': 'text/plain'
+        });
+        res.write(body);
+        res.end();
+});
 /**
  * This is a basic handler.  XXX Clean it up.  It's messy and not clear what is the purpose.
  * For now, just use it as is.  It pongs back messages.
