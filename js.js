@@ -333,7 +333,7 @@ js.listenSocketIO = function(servicehandler) {
 			io.sockets.on('connection', servicehandler);
 			sys.puts("Set connection to socket.io");
 		} catch(e) {
-                        sys.err("Caught a server-side Node.js exception.  Ouch!  Here's what happened: " + e.name + ". Error message: " + e.message);
+                        sys.error("Caught a server-side Node.js exception.  Ouch!  Here's what happened: " + e.name + ". Error message: " + e.message);
                         internalServerError(req, res);
                 }
 
