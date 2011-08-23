@@ -1,5 +1,40 @@
+/**
+#
+#Copyright (c) 2011 Razortooth Communications, LLC. All rights reserved.
+#
+#Redistribution and use in source and binary forms, with or without modification,
+#are permitted provided that the following conditions are met:
+#
+#    * Redistributions of source code must retain the above copyright notice,
+#      this list of conditions and the following disclaimer.
+#
+#    * Redistributions in binary form must reproduce the above copyright notice,
+#      this list of conditions and the following disclaimer in the documentation
+#      and/or other materials provided with the distribution.
+#
+#    * Neither the name of Razortooth Communications, LLC, nor the names of its
+#      contributors may be used to endorse or promote products derived from this
+#      software without specific prior written permission.
+#
+#THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+#ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+#WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+#DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+#ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+#(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+#LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+#ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+#(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+#SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+**/
+/** 
+  * Attributions:
+  * Twitter bootstrap: application.js - refactored for generic application (not sure what license applies to the original)
+  */
+/** 
+  bs.js: Handler for general UI logic
+ */
 $(document).ready(function(){
-
   // scroll spy logic
   // ================
 
@@ -11,7 +46,8 @@ $(document).ready(function(){
         return $(this).attr('href');
       }),
       offsets = $.map(targets, function (id) {
-        return $(id).offset().top;
+		var anchor = $(id);
+		return anchor.offset() ? anchor.offset().top: null;
       });
 
 
@@ -23,7 +59,7 @@ $(document).ready(function(){
   function processScroll(e) {
     var scrollTop = $window.scrollTop() + 10, i;
     for (i = offsets.length; i--;) {
-      if (activeTarget != targets[i] && scrollTop >= offsets[i] && (!offsets[i + 1] || scrollTop <= offsets[i + 1])) {
+      if (offsets[i] && activeTarget != targets[i] && scrollTop >= offsets[i] && (!offsets[i + 1] || scrollTop <= offsets[i + 1])) {
         activeTarget = targets[i];
         setButton(activeTarget);
       }
@@ -39,7 +75,7 @@ $(document).ready(function(){
   $window.scroll(processScroll);
 
 
-  // Dropdown example for topbar nav
+  // Dropdown for topbar nav
   // ===============================
 
   $("body").bind("click", function(e) {
@@ -63,13 +99,6 @@ $(document).ready(function(){
     $parentSiblings.removeClass("open");
     return false;
   });
-
-
-  // table sort example
-  // ==================
-
-  $("#sortTableExample").tablesorter( {sortList: [[1,0]]} );
-
 
   // add on logic
   // ============
