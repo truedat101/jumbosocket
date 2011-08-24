@@ -39,6 +39,7 @@ $(document).ready(function(){
   // ================
 
   var activeTarget,
+      BS_DBG = false,
       $window = $(window),
       position = {},
       nav = $('body > .topbar li a'),
@@ -66,6 +67,38 @@ $(document).ready(function(){
     }
   }
 
+    /** 
+     *  openTab on pill or tab
+     *  targetId - the id of the div to open in the tab container
+     *	parentContainer - the id of the parent container for the tab where we should look for the id	
+     *  XXX This is inefficient.  We should contain the search selector to the div containing the
+     *  targetId.
+     */
+  function openTab(targetId, parentContainer) {
+	  // Find the active tab, remove active class
+    // XXX Clean this up, it is inefficient
+    // hide the visible content
+    $(parentContainer).children().removeClass('active').find('a').each(function() {
+      console.log('remove content for ' + $(this).attr('href'));
+      if (this.href) $($(this).attr('href')).hide();
+    });
+    
+    
+
+    
+    // Set the id to be active
+    // $(parentContainer).children("li > a[href='" + targetId + "']").addClass('active');
+    // $(parentContainer).children("a[href='" + targetId + "']").each(function() {
+    $(parentContainer).find("li a[href='" + targetId + "']").each(function() {
+      $(this).parent().addClass('active');
+    });
+	  
+	  
+	  // show the content in div id
+    console.log('display content in div id = ' + targetId);
+    $(targetId).show();
+  }
+
   nav.click(function () {
     processScroll();
   });
@@ -74,6 +107,14 @@ $(document).ready(function(){
 
   $window.scroll(processScroll);
 
+  //
+  // Tab Click Handler
+  //
+  $("ul.pills > li a").bind("click", function(e) {
+    // openTab() 
+    openTab($(this).attr('href'), $(this).parent().parent()); 
+    console.log('clicked on href = ' + $(this).attr('href') + ' e.target ' + e.target + ' e.type ' + e.type + ' e.currentTarget ' + e.currentTarget);
+  });
 
   // Dropdown for topbar nav
   // ===============================
@@ -113,11 +154,15 @@ $(document).ready(function(){
 
 
   // Disable certain links in docs
+  // If BS_DBG = true or set
   // =============================
-
-  $('ul.tabs a, ul.pills a, .pagination a, .well .btn, .actions .btn, .alert-message .btn, a.close').click(function(e) {
-    e.preventDefault();
-  });
+  
+    if (BS_DBG) {
+      console.log('BS_DBG set, disabling basic links for tabs, pills, .pagination, alert-message');
+	$('ul.tabs a, ul.pills a, .pagination a, .well .btn, .actions .btn, .alert-message .btn, a.close').click(function(e) {
+	    e.preventDefault();
+	});
+    }
 
   // Copy code blocks in docs
   $(".copy-code").focus(function() {
