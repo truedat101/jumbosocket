@@ -479,7 +479,7 @@
 			<div class="page-header"> 
 				<h1>CCN4B Demo - CCN4BSnarf Service</h1> 
 			</div> 
-			<h2>Fixed topbar</h2> 
+			<h2>A simple demonstration of CCNX4B.js</h2> 
 			
 			<br /> 
  
@@ -510,28 +510,36 @@
 				<div class="span12 columns"> 
 					<ul class="pills"> 
 						<li class="active"><a href="#pill_home">Content</a></li> 
-            <li><a href="#pill_status">Status</a></li> 
+						<li><a href="#pill_status">Status</a></li> 
 						<li><a href="#pill_configuration">Configuration</a></li> 
 						<li><a href="#pill_services">Services</a></li> 
 						<li><a href="#pill_logs">Logs</a></li> 
-            <li><a href="#pill_analytics">Analytics</a></li> 
+						<li><a href="#pill_analytics">Analytics</a></li> 
 					</ul> 
-          <div id="pill_home">
-					<pre class="prettyprint linenums"> 
-						&lt;ul class="pills"&gt;
-						&lt;li class="active"&gt;&lt;a href="#"&gt;Home&lt;/a&gt;&lt;/li&gt;
-						&lt;li&gt;&lt;a href="#"&gt;Profile&lt;/a&gt;&lt;/li&gt;
-						&lt;li&gt;&lt;a href="#"&gt;Messages&lt;/a&gt;&lt;/li&gt;
-						&lt;li&gt;&lt;a href="#"&gt;Settings&lt;/a&gt;&lt;/li&gt;
-						&lt;li&gt;&lt;a href="#"&gt;Contact&lt;/a&gt;&lt;/li&gt;
-						&lt;/ul&gt;
-					</pre> 
-          </div>
-          <div id="pill_status">
-            <p>System Status is: Normal!</p>
-          </div>
-				</div> 
-			</div> 
+					<div id="pill_home">
+						<pre class="prettyprint linenums"> 
+							&lt;ul class="pills"&gt;
+							&lt;li class="active"&gt;&lt;a href="#"&gt;Home&lt;/a&gt;&lt;/li&gt;
+							&lt;li&gt;&lt;a href="#"&gt;Profile&lt;/a&gt;&lt;/li&gt;
+							&lt;li&gt;&lt;a href="#"&gt;Messages&lt;/a&gt;&lt;/li&gt;
+							&lt;li&gt;&lt;a href="#"&gt;Settings&lt;/a&gt;&lt;/li&gt;
+							&lt;li&gt;&lt;a href="#"&gt;Contact&lt;/a&gt;&lt;/li&gt;
+							&lt;/ul&gt;
+						</pre> 
+					</div>
+					<div id="pill_status" style="display: none;">
+						<p>System Status is: Normal!</p>
+					</div>
+					<div id="pill_services" style="display: none;">
+						<h4>CCNx Service Management</h4> 
+						<div class="well"> 
+							<button class="btn large primary" id="ccn_start">Start CCNx</button> 
+							<button class="btn large" id="ccn_stop" disabled>Stop CCNx</button> 
+							<button class="btn large" id="ccn_restart" disabled>Restart CCNx</button> 
+						</div>
+					</div>
+				</div> <!-- end div class="span12 columns"-->
+			</div> <!-- end div class=row -->
  
 		</section> 
 	</div> <!--! end of #container --> 
@@ -554,6 +562,7 @@
 <script src="/socket.io/socket.io.js" type="text/javascript"></script> 
 <script src="/js/bs.js"></script> 
 <script src="/js/js-common.js"></script> 
+<script src="/js/ccn4bnode-client.js"></script>
 <!-- scripts concatenated and minified via ant build script--> 
 <script src="/js/plugins.js"></script> 
 <script src="/js/script.js"></script> 

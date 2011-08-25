@@ -377,7 +377,7 @@ var server = createServer(function(req, res) {
 
 			handler(req, res);
 		} catch(e) {
-			sys.err("Caught a server-side Node.js exception.  Ouch!  Here's what happened: " + e.name + ". Error message: " + e.message);
+			sys.error("Caught a server-side Node.js exception.  Ouch!  Here's what happened: " + e.name + ". Error message: " + e.message);
 			internalServerError(req, res);
 		}
 

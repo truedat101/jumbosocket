@@ -29,18 +29,20 @@
 **/
 
 var js =  require("./js.js"),
-	  sys = require("sys");
+	net = require("net"),
+	sys = require("sys"),
+	url = require('url');
 
 
 js.get("/ccn4bnode", js.staticHandler("ccn4bnode.html"));
-js.get("/bootstrap", js.staticHandler("bootstrap.html"));
 
-js.get("/test", function(req, res) {
-        var body = 'Test';
+js.get("/pingstatus", function(req, res) {
+        var body = { 'status' : 'stopped'};
         res.writeHead(200, {
           'Content-Length': body.length,
-          'Content-Type': 'text/plain'
+          'Content-Type': 'text/json'
         });
+
         res.write(body);
         res.end();
 });
@@ -110,12 +112,12 @@ function ccn4bnodeHandler(client) {
                 } else { sys.err("empty message"); } // Ignore empty data messages
         });
         // XXX This dies with socket.io v0.7 .  Handling of broadcast is different.
-        setInterval(function() { // This could be a tweet stream, game status updates, robot messages
+        /* setInterval(function() { // This could be a tweet stream, game status updates, robot messages
                 sys.puts('sending something on the socket');
                 if (js.io) { // XXX Shouldn't this exist?
                         js.io.sockets.send("Ya'll ready for this");
                 }
-        }, 10000);
+        }, 10000); */
 }
 
 js.js_handler = ccn4bnodeHandler;
