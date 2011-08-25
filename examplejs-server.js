@@ -29,7 +29,8 @@
 **/
 
 var js =  require("./js.js"),
-	  sys = require("sys");
+	sys = require("sys"),
+	url = require('url');
 
 js.listenHttpWS(js.CONFIG['HTTPWS_PORT'], js.address);
 js.listenSocketIO(js.js_handler); // This is initially set to null, so it will fallback to use js.DEFAULT_JS_HANDLER
