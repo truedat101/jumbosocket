@@ -37,12 +37,18 @@ var js =  require("./js.js"),
 js.get("/ccn4bnode", js.staticHandler("ccn4bnode.html"));
 
 js.get("/pingstatus", function(req, res) {
-        var body = { 'status' : 'stopped'};
+	var status = {'status': 'stopped'};
+	var grep4ccnd  = js.executil('ps -x | grep ccnd');
+	console.log(grep4ccnd);
+	res.simpleJSON(200, grep4ccnd);
+});
+
+js.get("/helloworld", function(req, res) {
+        var body = 'hello world';
         res.writeHead(200, {
           'Content-Length': body.length,
-          'Content-Type': 'text/json'
+          'Content-Type': 'text/plain'
         });
-
         res.write(body);
         res.end();
 });

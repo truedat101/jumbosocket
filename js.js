@@ -50,7 +50,9 @@ var createServer = require('http').createServer,
 	sys = require('sys'),
 	assert = require('assert'), 
 	fs = require('fs'),
-	url = require('url');
+	url = require('url'), 
+	spawn = require('child_process').spawn,
+	exec  = require('child_process').exec;
 	
 
 /** 
@@ -93,6 +95,31 @@ js.getterer = function(path, handler) {
 	js.RE_MAP[path] = repath;
 	// console.log(regexMap);
 	js.get(repath, handler);
+}
+
+js.executil = function(execstring, options, callback) {
+	var child, data;
+	var optdefaults = { encoding: 'utf8',
+						timeout: 0,
+						maxBuffer: 200*1024,
+						killSignal: 'SIGTERM',
+						cwd: null,
+						env: null } /* We can change these defaults as needed */
+	
+	console.log('executil start exec of ' + execstring + ' at: ' + (new Date).getTime());
+	child = exec(execstring,
+				options ? options : optdefaults,
+				callback ? callback :
+				function (error, stdout, stderr) {
+					data = stdout;
+					console.log('stdout: ' + data + (new Date).getTime());
+					console.log('stderr: ' + stderr);
+					if (error !== null) {
+						console.log('exec error: ' + error);
+					}
+				});
+	console.log('executil of ' + child.pid + ' completed at ' + (new Date).getTime());
+	return { 'data' : data};
 }
 
 js.mime = {
