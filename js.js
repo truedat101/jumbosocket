@@ -52,7 +52,8 @@ var createServer = require('http').createServer,
 	fs = require('fs'),
 	url = require('url'), 
 	spawn = require('child_process').spawn,
-	exec  = require('child_process').exec;
+	exec  = require('child_process').exec,
+	logger = require('nlogger').logger(module);
 	
 
 /** 
@@ -106,20 +107,21 @@ js.executil = function(execstring, options, callback) {
 						cwd: null,
 						env: null } /* We can change these defaults as needed */
 	
-	console.log('executil start exec of ' + execstring + ' at: ' + (new Date).getTime());
+	if (options) logger.debug('using options');
+	if (callback) logger.debug('using callback');
+	logger.debug('executil start exec of ' + execstring + ' at: ' + (new Date).getTime());
 	child = exec(execstring,
 				options ? options : optdefaults,
 				callback ? callback :
 				function (error, stdout, stderr) {
 					data = stdout;
-					console.log('stdout: ' + data + (new Date).getTime());
-					console.log('stderr: ' + stderr);
+					logger.debug('stdout: ' + data + (new Date).getTime());
+					logger.debug('stderr: ' + stderr);
 					if (error !== null) {
-						console.log('exec error: ' + error);
+						logger.error('exec error: ' + error);
 					}
 				});
-	console.log('executil of ' + child.pid + ' completed at ' + (new Date).getTime());
-	return { 'data' : data};
+	logger.debug('executil of ' + child.pid + ' completed at ' + (new Date).getTime());
 }
 
 js.mime = {
@@ -360,8 +362,9 @@ js.listenSocketIO = function(servicehandler) {
 			io.sockets.on('connection', servicehandler);
 			sys.puts("Set connection to socket.io");
 		} catch(e) {
-                        sys.error("Caught a server-side Node.js exception.  Ouch!  Here's what happened: " + e.name + ". Error message: " + e.message);
-                        internalServerError(req, res);
+                        logger.error("Caught a server-side Node.js exception.  Ouch!  Here's what happened: " + e.name + ". Error message: " + e.message);
+                        if (e.stack) logger.error(e.stack);
+						internalServerError(req, res);
                 }
 
 	} else {

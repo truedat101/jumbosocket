@@ -31,16 +31,28 @@
 var js =  require("./js.js"),
 	net = require("net"),
 	sys = require("sys"),
-	url = require('url');
+	url = require('url'),
+	logger = require('nlogger').logger(module);
 
 
 js.get("/ccn4bnode", js.staticHandler("ccn4bnode.html"));
 
 js.get("/pingstatus", function(req, res) {
 	var status = {'status': 'stopped'};
-	var grep4ccnd  = js.executil('ps -x | grep ccnd');
-	console.log(grep4ccnd);
-	res.simpleJSON(200, grep4ccnd);
+	var len;
+	var data = new Buffer(1024);
+	var grep4ccnd = js.executil('ps -x | grep ccnd', null ,function(error, stdout, stderr) {
+			logger.debug('******** pingstatus ***********');
+			// logger.debug('stdout: ' + data + (new Date).getTime());
+			if (stderr) logger.debug('stderr: ' + stderr);
+			if (error !== null) {
+				console.log('exec error: ' + error);
+			}
+			len = data.write(stdout.toString('ascii', 0), 'utf8', 0);
+			logger.debug('wrote ' + len + ' bytes');
+			console.log(data.toString('ascii', 0, len));
+			res.simpleJSON(200, data.toString('ascii', 0, len));
+		});
 });
 
 js.get("/helloworld", function(req, res) {
