@@ -40,8 +40,8 @@ js.get("/ccn4bnode", js.staticHandler("ccn4bnode.html"));
 js.get("/pingstatus", function(req, res) {
 	var status = {'status': 'stopped'};
 	var len;
-	var data = new Buffer(1024);
-	var grep4ccnd = js.executil('ps -x | grep ccnd', null ,function(error, stdout, stderr) {
+	var data = new Buffer(1024); // XXX We can get rid of this
+	var grep4ccnd = js.executil('ps aux | grep ccnd | grep -v grep', null ,function(error, stdout, stderr) {
 			logger.debug('******** pingstatus ***********');
 			// logger.debug('stdout: ' + data + (new Date).getTime());
 			if (stderr) logger.debug('stderr: ' + stderr);
@@ -51,7 +51,9 @@ js.get("/pingstatus", function(req, res) {
 			len = data.write(stdout.toString('ascii', 0), 'utf8', 0);
 			logger.debug('wrote ' + len + ' bytes');
 			console.log(data.toString('ascii', 0, len));
-			res.simpleJSON(200, data.toString('ascii', 0, len));
+			
+			if (len > 0) status.status = 'started';
+			res.simpleJSON(200, status);
 		});
 });
 
