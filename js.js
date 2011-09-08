@@ -459,17 +459,17 @@ var getNetworkIP = (function () {
     var filterRE;
 
     switch (process.platform) {
-    // TODO: implement for OSs without ifconfig command
-    case 'darwin':
-         command = 'ifconfig';
-         filterRE = /\binet\s+([^\s]+)/g;
-         // filterRE = /\binet6\s+([^\s]+)/g; // IPv6
-         break;
-    default:
-         command = 'ifconfig';
-         filterRE = /\binet\b[^:]+:\s*([^\s]+)/g;
-         // filterRE = /\binet6[^:]+:\s*([^\s]+)/g; // IPv6
-         break;
+	    // TODO: implement for OSs without ifconfig command
+	    case 'darwin':
+	         command = 'ifconfig';
+	         filterRE = /\binet\s+([^\s]+)/g;
+	         // filterRE = /\binet6\s+([^\s]+)/g; // IPv6
+	         break;
+	    default:
+	         command = 'ifconfig';
+	         filterRE = /\binet\b[^:]+:\s*([^\s]+)/g;
+	         // filterRE = /\binet6[^:]+:\s*([^\s]+)/g; // IPv6
+	         break;
     }
 
     return function (callback, bypassCache) {

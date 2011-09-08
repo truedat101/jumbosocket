@@ -32,6 +32,7 @@ var js =  require("./js.js"),
 	net = require("net"),
 	sys = require("sys"),
 	url = require('url'),
+	ccn4bnode = require('ccn4bnode'),
 	logger = require('nlogger').logger(module);
 
 
@@ -46,15 +47,71 @@ js.get("/pingstatus", function(req, res) {
 			// logger.debug('stdout: ' + data + (new Date).getTime());
 			if (stderr) logger.debug('stderr: ' + stderr);
 			if (error !== null) {
-				console.log('exec error: ' + error);
+				logger.error('exec error: ' + error);
 			}
 			len = data.write(stdout.toString('ascii', 0), 'utf8', 0);
 			logger.debug('wrote ' + len + ' bytes');
-			console.log(data.toString('ascii', 0, len));
+			logger.debug(data.toString('ascii', 0, len));
 			
 			if (len > 0) status.status = 'started';
 			res.simpleJSON(200, status);
 		});
+});
+
+/** 
+  * XXX Need to decide if we want to have a main router method for incoming calls
+  */
+js.getterer("/ccnd/[\\w\\.\\-]+", function(req, res) {
+	var status = {'status': 'stopped'};
+	var route = url.parse(req.url).pathname.split('/')[2];
+	var len;
+	var data = new Buffer(1024); // XXX We can get rid of this
+	var ccndop;
+	
+	switch (route) {
+    	case 'stop':
+			stop();
+			break;
+		case 'start':
+			start();
+			break;
+		case 'restart':
+			restart();
+			break;
+		default:
+			break;
+	}
+	
+	function stop() {
+		js.executil('ps aux | grep ccnd | grep -v grep ', null ,function(error, stdout, stderr) {
+				logger.debug('******** pingstatus ***********');
+				// logger.debug('stdout: ' + data + (new Date).getTime());
+				if (stderr) logger.debug('stderr: ' + stderr);
+				if (error !== null) {
+					console.log('exec error: ' + error);
+				}
+				len = data.write(stdout.toString('ascii', 0), 'utf8', 0);
+				logger.debug('wrote ' + len + ' bytes');
+				logger.log(data.toString('ascii', 0, len));
+				if ((len > 0) && (data.toString('ascii', 0, len).trim().length > 0)) js.executil('ccndstop', null, null);  // XXX Fire and forget
+		});
+	}
+	
+	function start() {
+		
+	}
+	
+	function restart() {
+		logger.debug(__dirname);
+	}
+	
+	var body = 'ccn on route ' + route;
+    res.writeHead(200, {
+      'Content-Length': body.length,
+      'Content-Type': 'text/plain'
+    });
+    res.write(body);
+    res.end();
 });
 
 js.get("/helloworld", function(req, res) {
