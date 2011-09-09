@@ -36,6 +36,8 @@
  **/
 $(document).ready(function() {
 	pingStatusInterval(); // Check server status every so often
+	statsInterval(); // Check server status every so often
+	rssInterval(); // Check server status every so often
 	$('#ccn_stop').click(function() {
 		console.log('ccn_stop');
 		$('#ccn_stop').attr('disabled', 'true').removeClass('primary');
@@ -80,6 +82,37 @@ function pingStatusInterval() {
 			data: {},
 			cache: false,
 			success: pingStatusHandler,
+			error: handleError
+		});
+	}, 10000);
+}
+
+function rssInterval() {
+	setInterval(function() {
+		$.ajax({
+			url: '/ccnd/rss',
+			dataType: 'json',
+			data: {},
+			cache: false,
+			success: function(data) {
+				
+			},
+			error: handleError
+		});
+	}, 10000);
+}
+
+function statsInterval() {
+	setInterval(function() {
+		$.ajax({
+			url: '/ccnd/stats',
+			dataType: 'json',
+			data: {},
+			cache: false,
+			success: function(data) {
+				// var results = data['results'];
+				$('#ccnd_status').text('<p>' + data['results']);
+			},
 			error: handleError
 		});
 	}, 10000);
