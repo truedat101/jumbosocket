@@ -38,10 +38,32 @@ $(document).ready(function() {
 	pingStatusInterval(); // Check server status every so often
 	$('#ccn_stop').click(function() {
 		console.log('ccn_stop');
+		$('#ccn_stop').attr('disabled', 'true').removeClass('primary');
+		$.ajax({
+			url: '/ccnd/stop',
+			dataType: 'json',
+			data: {},
+			cache: false,
+			success: function() {
+				// XXX Should set a status message
+			},
+			error: handleError
+		});
 		return false;
 	});
 	$('#ccn_start').click(function() {
 		console.log('ccn_start');
+		$('#ccn_start').attr('disabled', 'true').removeClass('primary');
+		$.ajax({
+			url: '/ccnd/start',
+			dataType: 'json',
+			data: {},
+			cache: false,
+			success: function() {
+				// XXX Should set a status message
+			},
+			error: handleError
+		});
 		return false;
 	});
 	$('#ccn_restart').click(function() {
@@ -68,33 +90,33 @@ function pingStatusHandler(data) {
 		if (data.status) {
 			switch(data.status) {
 				case 'stopped': {
-					$('ccn_start').enable();
-					$('ccn_stop').disable();
-					$('ccn_restart').disable();
+					$('#ccn_start').removeAttr('disabled').addClass('primary');
+					$('#ccn_stop').attr('disabled', 'true').removeClass('primary');
+					$('#ccn_restart').attr('disabled', 'true');
 					break;
 				} 
 				case 'started': {
-					$('ccn_start').disable();
-					$('ccn_stop').enable();
-					$('ccn_restart').enable();
+					$('#ccn_start').attr('disabled', 'true').removeClass('primary');
+					$('#ccn_stop').removeAttr('disabled').addClass('primary');
+					$('#ccn_restart').removeAttr('disabled');
 					break;
 				}
 				case 'stopping': {
-					$('ccn_start').enable();
-					$('ccn_stop').disable();
-					$('ccn_restart').disable();
+					$('#ccn_start').removeAttr('disabled').addClass('primary');
+					$('#ccn_stop').attr('disabled', 'true').removeClass('primary');
+					$('#ccn_restart').attr('disabled', 'true');
 					break;
 				}
 				case 'starting': {
-					$('ccn_start').disable();
-					$('ccn_stop').enable();
-					$('ccn_restart').disable();
+					$('#ccn_start').attr('disabled', 'true').removeClass('primary');
+					$('#ccn_stop').removeAttr('disabled').addClass('primary');
+					$('#ccn_restart').attr('disabled', 'true');
 					break;
 				}
 				case 'restart': {
-					$('ccn_start').disable();
-					$('ccn_stop').enable();
-					$('ccn_restart').disable();
+					$('#ccn_start').attr('disabled', 'true');
+					$('#ccn_stop').removeAttr('disabled');
+					$('#ccn_restart').attr('disabled', 'true');
 					break;
 				}
 				default: {
