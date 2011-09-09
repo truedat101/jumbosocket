@@ -135,7 +135,7 @@ js.getterer("/ccnd/[\\w\\.\\-]+", function(req, res) {
 	};
 	
 	function stats() {
-		ccnd_handle.status(function(error, stdout, stderr) {
+		ccnd_handle.stats(function(error, stdout, stderr) {
 				var data = new Buffer(1024); // XXX We can get rid of this
 				logger.debug('******** ccndstatus ***********');
 				// logger.debug('stdout: ' + data + (new Date).getTime());
