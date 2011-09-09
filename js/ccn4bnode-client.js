@@ -35,9 +35,11 @@
  * 
  **/
 $(document).ready(function() {
-	pingStatusInterval(); // Check server status every so often
-	statsInterval(); // Check server status every so often
-	rssInterval(); // Check server status every so often
+	pingStatusInterval(); // Check if ccnd is alive every so often
+	statsInterval(); // Check ccnd status every so often
+	rssInterval(); // Check server memory every so often
+	dumpnamesInterval(); // Get dump of names every so often
+	
 	$('#ccn_stop').click(function() {
 		console.log('ccn_stop');
 		$('#ccn_stop').attr('disabled', 'true').removeClass('primary');
@@ -70,6 +72,45 @@ $(document).ready(function() {
 	});
 	$('#ccn_restart').click(function() {
 		console.log('ccn_restart');
+		alert('Not Implemented');
+		return false;
+	});
+	
+	$('#ccnr_stop').click(function() {
+		console.log('ccnr_stop');
+		$('#ccnr_stop').attr('disabled', 'true').removeClass('primary');
+		$('#ccnr_start').removeAttr('disabled').addClass('primary');
+		$.ajax({
+			url: '/ccnr/stop',
+			dataType: 'json',
+			data: {},
+			cache: false,
+			success: function() {
+				// XXX Should set a status message
+			},
+			error: handleError
+		});
+		return false;
+	});
+	$('#ccnr_start').click(function() {
+		console.log('ccnr_start');
+		$('#ccnr_start').attr('disabled', 'true').removeClass('primary');
+		$('#ccnr_stop').removeAttr('disabled').addClass('primary');
+		$.ajax({
+			url: '/ccnr/start',
+			dataType: 'json',
+			data: {},
+			cache: false,
+			success: function() {
+				// XXX Should set a status message
+			},
+			error: handleError
+		});
+		return false;
+	});
+	$('#ccnr_restart').click(function() {
+		console.log('ccnr_restart');
+		alert('Not Implemented');
 		return false;
 	});
 });
@@ -95,11 +136,28 @@ function rssInterval() {
 			data: {},
 			cache: false,
 			success: function(data) {
-				
+				var results = data['results'];
+				$('#rss').text('rss:' + Math.round((results.rss/(1024*1024))*10)/10 + 'mb, vsize:' + Math.round((results.vsize/(1024*1024))*10)/10 + 'mb, heapTotal:' + Math.round((results.heapTotal/(1024*1024))*10)/10 + 'mb, heapUsed:' + Math.round((results.heapUsed/(1024*1024))*10)/10);
 			},
 			error: handleError
 		});
 	}, 10000);
+}
+
+function dumpnamesInterval() {
+	setInterval(function() {
+		$.ajax({
+			url: '/ccnd/dumpnames',
+			dataType: 'json',
+			data: {},
+			cache: false,
+			success: function(data) {
+				var results = data['results'];
+				$('#dumpofnames').text('* ' + results); // XXX This doesn't show up without some leading text
+			},
+			error: handleError
+		});
+	}, 15000);
 }
 
 function statsInterval() {
@@ -110,8 +168,15 @@ function statsInterval() {
 			data: {},
 			cache: false,
 			success: function(data) {
-				// var results = data['results'];
-				$('#ccnd_status').text('<p>' + data['results']);
+				var results = data['results'];
+				// $('#ccnd_status').text('<p>' + data['results']);
+				for (var i = 0; i < 19; i++) { // XXX Hardcode the max table size, bad, fix this, and pretty up the formatting
+					if (results[i]) { 
+						$('#status-' + i).text(results[i]);
+					} else {
+						$('#status-' + i).text(''); // Empty out the field if there is nothing there.
+					}
+				}
 			},
 			error: handleError
 		});

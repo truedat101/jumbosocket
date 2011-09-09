@@ -494,11 +494,11 @@
 				</div> 
 				<div class="span6 columns"> 
 					<h4>Content Snarfing</h4> 
-					<p>Input any URL and pull in content.</p> 
+					<p>Input any URL and pull in content.  Get your local copy of the Internet</p> 
 				</div> 
 				<div class="span6 columns"> 
 					<h4>Content Sharding</h4> 
-					<p>As part of the main navigation, we’ve included the ability for you to add dropdowns to your nav. Check out the secondary nav above (right aligned) to see how it’s done.</p> 
+					<p>Content can be shared and split across many Micro-Cloud nodes.</p> 
 				</div> 
 			</div> 
 			<div class="row"> 
@@ -509,26 +509,109 @@
 				</div> 
 				<div class="span12 columns"> 
 					<ul class="pills"> 
-						<li class="active"><a href="#pill_home">Content</a></li> 
+						<li class="active"><a href="#pill_services">Services</a></li> 
+						<li><a href="#pill_content">Content</a></li> 
 						<li><a href="#pill_status">Status</a></li> 
 						<li><a href="#pill_configuration">Configuration</a></li> 
-						<li><a href="#pill_services">Services</a></li> 
 						<li><a href="#pill_logs">Logs</a></li> 
-						<li><a href="#pill_analytics">Analytics</a></li> 
+						<li><a href="#pill_analytics">Analytics</a></li>
 					</ul> 
-					<div id="pill_home">
-						<pre class="prettyprint linenums"> 
-							&lt;ul class="pills"&gt;
-							&lt;li class="active"&gt;&lt;a href="#"&gt;Home&lt;/a&gt;&lt;/li&gt;
-							&lt;li&gt;&lt;a href="#"&gt;Profile&lt;/a&gt;&lt;/li&gt;
-							&lt;li&gt;&lt;a href="#"&gt;Messages&lt;/a&gt;&lt;/li&gt;
-							&lt;li&gt;&lt;a href="#"&gt;Settings&lt;/a&gt;&lt;/li&gt;
-							&lt;li&gt;&lt;a href="#"&gt;Contact&lt;/a&gt;&lt;/li&gt;
-							&lt;/ul&gt;
-						</pre> 
+					<div id="pill_content">
+						<h4>CCNx Content Management</h4> 
+						<h3>Content Sharing</h3>
+						<div class="well"> 
+							<div class="clearfix">
+							        <label id="optionsRadio">List of Content</label>
+							        <div class="input">
+							          <ul class="inputs-list">
+							            <li>
+							              <label>
+							                <input type="checkbox" name="optionsCheckboxes" value="option1" />
+							                <span>9/11 Commemoration Video</span>
+							              </label>
+							            </li>
+							            <li>
+							              <label>
+							                <input type="checkbox" name="optionsCheckboxes" value="option2" />
+							                <span>My Copy of Wikipedia</span>
+							              </label>
+							            </li>
+										<li>
+							              <label>
+							                <input type="checkbox" name="optionsCheckboxes" value="option3" />
+							                <span>Khan Academy Algebra 1 Video</span>
+							              </label>
+							            </li>
+							          </ul>
+							        </div>
+							      </div> <!-- /clearfix -->
+							<button class="btn large primary" id="share_content">Share</button> 
+						</div>
+						<h3>CCNx Names</h3>
+						<span id="dumpofnames">OK</span>
 					</div>
 					<div id="pill_status" style="display: none;">
-						<span id="ccnd_status"></span>
+						<!-- <span id="ccnd_status"></span> -->
+						<div class="row">
+							<div class="row show-grid"> 
+								<div class="span11 columns" id="rss"></div> 
+							</div>
+							<div class="row show-grid"> 
+								<div class="span11 columns" id="status-0"></div> 
+							</div>
+							<div class="row show-grid"> 
+								<div class="span11 columns" id="status-2"></div> 
+							</div>
+							<div class="row show-grid"> 
+								<div class="span11 columns" id="status-3"></div> 
+							</div>
+							<div class="row show-grid"> 
+								<div class="span11 columns" id="status-4"></div> 
+							</div>
+							<div class="row show-grid"> 
+								<div class="span11 columns" id="status-5"></div> 
+							</div>
+							<div class="row show-grid"> 
+								<div class="span11 columns" id="status-6"></div> 
+							</div>
+							<div class="row show-grid"> 
+								<div class="span11 columns" id="status-7"></div> 
+							</div>
+							<div class="row show-grid"> 
+								<div class="span11 columns" id="status-8"></div> 
+							</div>
+							<div class="row show-grid"> 
+								<div class="span11 columns" id="status-9"></div> 
+							</div>
+							<div class="row show-grid"> 
+								<div class="span11 columns" id="status-10"></div> 
+							</div>
+							<div class="row show-grid"> 
+								<div class="span11 columns" id="status-11"></div> 
+							</div>
+							<div class="row show-grid"> 
+								<div class="span11 columns" id="status-12"></div> 
+							</div>
+							<div class="row show-grid"> 
+								<div class="span11 columns" id="status-13"></div> 
+							</div>
+							<div class="row show-grid"> 
+								<div class="span11 columns" id="status-14"></div> 
+							</div>
+							<div class="row show-grid"> 
+								<div class="span11 columns" id="status-15"></div> 
+							</div>
+							<div class="row show-grid"> 
+								<div class="span11 columns" id="status-16"></div> 
+							</div>
+							<div class="row show-grid"> 
+								<div class="span11 columns" id="status-17"></div> 
+							</div>
+							<div class="row show-grid"> 
+								<div class="span11 columns" id="status-18"></div> 
+							</div>
+							
+						</div>
 						<!-- >
 						<div class="row"> 
 							<div class="row show-grid"> 
@@ -544,10 +627,17 @@
 					</div>
 					<div id="pill_services" style="display: none;">
 						<h4>CCNx Service Management</h4> 
+						<h3>CCND Admin</h3>
 						<div class="well"> 
-							<button class="btn large primary" id="ccn_start">Start CCNx</button> 
-							<button class="btn large" id="ccn_stop" disabled>Stop CCNx</button> 
-							<button class="btn large" id="ccn_restart" disabled>Restart CCNx</button> 
+							<button class="btn large primary" id="ccn_start">Start CCND</button> 
+							<button class="btn large" id="ccn_stop" disabled>Stop CCND</button> 
+							<button class="btn large" id="ccn_restart" disabled>Restart CCND</button> 
+						</div>
+						<h3>CCNR Admin</h3>
+						<div class="well"> 
+							<button class="btn large primary" id="ccnr_start">Start CCNR</button> 
+							<button class="btn large" id="ccnr_stop" disabled>Stop CCNR</button> 
+							<button class="btn large" id="ccnr_restart" disabled>Restart CCNR</button> 
 						</div>
 					</div>
 				</div> <!-- end div class="span12 columns"-->
