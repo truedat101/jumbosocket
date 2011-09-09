@@ -32,7 +32,8 @@ var js =  require("./js.js"),
 	net = require("net"),
 	sys = require("sys"),
 	url = require('url'),
-	ccn4bnode = require('ccn4bnode'),
+	util = require('util'),
+	CCNDAdmin = require('ccn4bnode').CCNDAdmin,
 	logger = require('nlogger').logger(module);
 
 
@@ -41,7 +42,7 @@ js.get("/ccn4bnode", js.staticHandler("ccn4bnode.html"));
 js.get("/pingstatus", function(req, res) {
 	var status = {'status': 'stopped'};
 	var len;
-	var data = new Buffer(1024); // XXX We can get rid of this
+	var data = new Buffer(1024); 
 	var grep4ccnd = js.executil('ps aux | grep ccnd | grep -v grep', null ,function(error, stdout, stderr) {
 			logger.debug('******** pingstatus ***********');
 			// logger.debug('stdout: ' + data + (new Date).getTime());
@@ -65,8 +66,8 @@ js.getterer("/ccnd/[\\w\\.\\-]+", function(req, res) {
 	var status = {'status': 'stopped'};
 	var route = url.parse(req.url).pathname.split('/')[2];
 	var len;
-	var data = new Buffer(1024); // XXX We can get rid of this
-	var ccndop;
+	
+	var ccnd_handle = new CCNDAdmin(); // XXX We should just do this once and cache it
 	
 	switch (route) {
     	case 'stop':
@@ -78,40 +79,84 @@ js.getterer("/ccnd/[\\w\\.\\-]+", function(req, res) {
 		case 'restart':
 			restart();
 			break;
+		case 'stats':
+			stats();
+			break;
+		case 'rss':
+			rss();
+			break;
 		default:
+			status.status = 'unknown';
+			res.simpleJSON(200, status);
 			break;
 	}
 	
+	function rss() {
+		status.status = 'unknown'; // XXX I need a lighter weight way to just ping ccnd, leave status unknown for now
+		status['results'] = process.memoryUsage(); // util.inspect(process.memoryUsage())
+		res.simpleJSON(200, status);
+	};
+	
 	function stop() {
-		js.executil('ps aux | grep ccnd | grep -v grep ', null ,function(error, stdout, stderr) {
-				logger.debug('******** pingstatus ***********');
+		ccnd_handle.stop(function(error, stdout, stderr) {
+				var data = new Buffer(1024); // XXX We can get rid of this
+				logger.debug('******** ccndstop ***********');
 				// logger.debug('stdout: ' + data + (new Date).getTime());
 				if (stderr) logger.debug('stderr: ' + stderr);
 				if (error !== null) {
-					console.log('exec error: ' + error);
+					logger.error('exec error: ' + error);
 				}
 				len = data.write(stdout.toString('ascii', 0), 'utf8', 0);
 				logger.debug('wrote ' + len + ' bytes');
-				logger.log(data.toString('ascii', 0, len));
-				if ((len > 0) && (data.toString('ascii', 0, len).trim().length > 0)) js.executil('ccndstop', null, null);  // XXX Fire and forget
-		});
-	}
+				logger.debug(data.toString('ascii', 0, len));
+
+				if (len > 0) {
+					status['results'] = data.toString('ascii', 0, len);
+				} else {
+					status['results'] = '';
+				}
+				res.simpleJSON(200, status);
+			});
+	};
 	
 	function start() {
-
-	}
+		ccnd_handle.start(); // XXX This sucks, but oh well.  Need to set up an event emitter to notify when started
+		logger.debug('******** ccnd start ***********');
+		status.status = 'started';  // XXX For now assume started unless pingstatus tells us something different
+		status['results'] = '';
+		res.simpleJSON(200, status);
+	};
 	
 	function restart() {
-		logger.debug(__dirname);
-	}
+		ccnd_handle.restart();
+		ogger.debug('******** ccnd restart***********');
+		status.status = 'restarting';
+		res.simpleJSON(200, status);
+	};
 	
-	var body = 'ccn on route ' + route;
-    res.writeHead(200, {
-      'Content-Length': body.length,
-      'Content-Type': 'text/plain'
-    });
-    res.write(body);
-    res.end();
+	function stats() {
+		ccnd_handle.status(function(error, stdout, stderr) {
+				var data = new Buffer(1024); // XXX We can get rid of this
+				logger.debug('******** ccndstatus ***********');
+				// logger.debug('stdout: ' + data + (new Date).getTime());
+				if (stderr) logger.debug('stderr: ' + stderr);
+				if (error !== null) {
+					logger.error('exec error: ' + error);
+				}
+				len = data.write(stdout.toString('ascii', 0), 'utf8', 0);
+				logger.debug('wrote ' + len + ' bytes');
+				logger.debug(data.toString('ascii', 0, len));
+
+				if (len > 0) {
+					status.status = 'started';
+					status['results'] = data.toString('ascii', 0, len).split('\n');
+				} else {
+					status.status = 'stopped';
+					status['results'] = '';
+				}
+				res.simpleJSON(200, status);
+			});
+	};
 });
 
 js.get("/helloworld", function(req, res) {
