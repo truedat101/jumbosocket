@@ -20,7 +20,7 @@
 	<link type="text/plain" rel="author" href="/humans.txt" /> 
  
 </head> 
-<body> 
+<body onload="createTimeline()"> 
  
     <div class="topbar"> 
       <div class="container"> 
@@ -29,7 +29,8 @@
           <li class="active"><a href="#masthead">Overview</a></li> 
           <li><a href="#about">About</a></li> 
           <li><a href="#usage">Usage</a></li> 
-          <li><a href="#source">Source</a></li> 
+          <li><a href="#source">Source</a></li>
+		  <li><a href="#api">API</a></li>
           <li><a href="https://github.com/truedat101/ccn4bnode/tarball/master">Download</a></li> 
           <li><a href="#demo">Demo</a></li> 
 		  <li class="menu"><a href="#" class="menu">Slidedeck</a>
@@ -37,7 +38,7 @@
 					<li><a href="#about">What is CCN4B.js?</a></li>
 					<li><a href="#usecases">Motivation & Use Cases</a></li>
 					<li><a href="#collaborators">Collaborators</a></li>
-					<li><a href="#whyjs">Why Javascript</a></li>
+					<li><a href="#whyjs">Why Javascript?</a></li>
 					<li><a href="#implementation">Implementation</a></li>
 					<li><a href="#status">Status</a></li>
 					<li><a href="#roadmap">Roadmap</a></li>
@@ -52,7 +53,7 @@
           <h1>CCN4B.js</h1> 
           <p class="lead"> 
            CCN4B.js - a Javascript framework for CCNx Protocol.<br /> 
-            The CCN4B.js project is an open source project which is a proof of concept. Short for Content Centric Networking for Browsers, CCN4B is a small CCNx client API written in Javascript (JS), that utilizes the evented model of development of JS. APIs are written to be asynchronous. Web application developers can choose to deploy this API in the client side of the web application (in script tag), or on the server-side of the web application, as a module import for a Server-Side Javascript platform called Node.js.<br /> 
+            The CCN4B.js project is an open source project which is a proof of concept. Short for Content Centric Networking for Browsers, CCN4B is a small CCNx client API written in Javascript (JS), that utilizes the evented model of JS development. APIs are written to be asynchronous. Web application developers can choose to deploy this API in the client side of the web application (in script tag), or on the server-side of the web application, as a module import for a Server-Side Javascript platform called Node.js.<br /> 
           </p> 
         </div> <!-- /container --> 
       </div> 
@@ -65,31 +66,45 @@
 	  		<div class="page-header"> 
 	    			<h1>About CCN4B.js <small>Brief history, browser support, and more</small></h1> 
 	  		</div> 
+			<h3>What is CCN4B.js</h3>
+			<p>The CCN4B.js project is a collection of Javascript libraries and services that support communication and development using the CCNx Protocol. It constitutes a mix of Client-Side Javascript Libraries and Server-Side Middleware.</p>
+			<br/>
+			<p><img src="/images/ccn4bjs-overview.png" />
+			<h3>Brief History</h3>
+			<p>This project was started in August of 2011 in response to an effort to help solve a problem with getting broadband and data services deployed in the developing world. CCNx offers an interesting set of attributes which may support various use cases for deployment in adverse conditions, such as intermittent power, poor quality of internet connectivity, lack of connectivity, and lack of general Internet infrastructure.</p>
+			<h3>Browser As the Platform</h3>
+			<p>Since 2007, with the advent of the iPhone/iPod Ecosystem, the importance of the Web Runtime has grown in leaps and bounds. With the rise and fall of proprietary development platforms, and with the continued issues with IPR around technologies like Android, the Web is the only platform that is future proof and cannot be erase, held under injunction, sued, or turned off.</p>
+			<h3>Low Cost/Embedded Devices to Bridge The Digital Diviide</h3>
+			<p>The BOM cost of a complete Wifi enabled device with a screen is on a downward curve, with power and capability increasing as cost declines over time. This is a challenge for profits of large semiconductor companies, but presents a great opportunity for underdeveloped countries to leap ahead in technology deployment and utilization. The Web is the lowest common denominator for app development and deployment on these low cost devices (after SMS).</p>			
+		
 		</section> 
 		
-		<section id="Usage"> 
+		<section id="usage"> 
 			<div class="page-header"> 
 			  <h1>Usage <small> - coding, APIs, samples, and deployment.</small></h1> 
+			  <h3>Quickstart Guide</h3>
+			  <OL>
+				<li>Install node.js - (nodejs.org)</li>
+				<li>Install NPM (npmjs.org)
+				<li>run 'npm install ccn4bnode'. This will install ccnx-0.4.0</li>
+				<li>do a git clone of ccn4bnode 'git clone git@github.com:truedat101/ccn4bnode.git'</li>
+				<li>cd ccn4bnode/jumbosocket</li>
+				<li>run 'node ccn4bnode-server.js'</li>
+				<li>go to http://localhost:8080/ccn4bnode</li>
 			</div> 
  
 			<div class="row"> 
 			  <div class="span4 columns"> 
 			    <h2>Coding</h2> 
-			    <p>Discuss the Javascript</p> 
+			    <p>Discuss the Javascript with code samples - TODO</p> 
 			  </div> 
 			  <div class="span4 columns"> 
-			    <h1>h1. Heading 1</h1> 
-			    <h2>h2. Heading 2</h2> 
-			    <h3>h3. Heading 3</h3> 
-			  </div> 
-			</div> 
- 
- 
-			    <h4>When to use</h4> 
-			    <p>Emphasis tags (<code>&lt;strong&gt;</code> and <code>&lt;em&gt;</code>) should be used to indicate additional importance or emphasis of a word or phrase relative to its surrounding copy. Use <code>&lt;strong&gt;</code> for importance and <code>&lt;em&gt;</code> for <em>stress</em> emphasis.</p> 
-			    <h3>Emphasis in a paragraph</h3> 
-			    <p><a href="#">Fusce dapibus</a>, <strong>tellus ac cursus commodo</strong>, <em>tortor mauris condimentum nibh</em>, ut fermentum massa justo sit amet risus. Maecenas faucibus mollis interdum. Nulla vitae elit libero, a pharetra augue.</p> 
-			    <p><strong>Note:</strong> It's still okay to use <code>&lt;b&gt;</code> and <code>&lt;i&gt;</code> tags in HTML5, but they don't come with inherent styles anymore. <code>&lt;b&gt;</code> is meant to highlight words or phrases without conveying additional importance, while <code>&lt;i&gt;</code> is mostly for voice, technical terms, etc.</p> 
+			    <h2>Testing</h2> 
+			    <p>Discuss testing and verification of the code - TODO</p> 
+			  </div>
+			</div>
+			
+			 
  
 		</section> 
 		<section id="source"> 
@@ -97,13 +112,22 @@
 				<h1>CCN4B.js <small>source code</small></h1> 
 			</div>
 			<ul> 
-				<li><a href="https://github.com/truedat101/ccn4b">CCN4B.js</a></li>
-				<li><a href="https://github.com/truedat101/ccn4bname.js">CCN4BName.js</a></li>
-				<li><a href="https://github.com/truedat101/ccn4bnode">CCN4BNode on Github</a></li>
-				<li><a href="https://github.com/truedat101/jumbosocket">Jumbosocket</a></li>
+				<li><a href="https://github.com/truedat101/ccn4b">CCN4B.js - umbrella project hosted on Github.com, under BSD license (currently a placeholder project on Github)</a></li>
+				<li><a href="https://github.com/truedat101/ccn4bname.js">CCN4BName.js - handles CCNx Naming and URI validation and encoding, hosted on Github, under BSD license</a></li>
+				<li><a href="https://github.com/truedat101/ccn4bnode">CCN4BNode - provides the middleware wrapper around native CCNx components, and the packaging for CCNx for easy distribution, on Github, under BSD license</a></li>
+				<li><a href="https://github.com/truedat101/jumbosocket">Jumbosocket - is a thin Node.js server providing HTTP/HTTPs services + a Web Socket oriented services backend.</a></li>
 				
 			</ul>
 		</section> 
+		
+		<section id="api"> 
+ 
+			<div class="page-header"> 
+				<h1>API Documentation</h1> 
+				<p>This is a big todo item.  Currently exploring various JS documentation options</p>
+			</div> 
+ 
+		</section>
 		
 		<section id="download"> 
  
@@ -111,292 +135,11 @@
 				<h1>Download</h1> 
 			</div> 
  
-			<div class="row"> 
-				<div class="span4 columns"> 
-					<h2>Default styles</h2> 
-					<p>All forms are given default styles to present them in a readable and scalable way. Styles are provided for text inputs, select lists, textareas, radio buttons and checkboxes, and buttons.</p> 
-				</div> 
-				<div class="span12 columns"> 
-					<form> 
-						<fieldset> 
-							<legend>Example form legend</legend> 
-							<div class="clearfix"> 
-								<label for="">X-Large Input</label> 
-								<div class="input"> 
-									<input class="xlarge" id="xlInput" name="xlInput" size="30" type="text" /> 
-								</div> 
-							</div> <!-- /clearfix --> 
-							<div class="clearfix"> 
-								<label for="">Select</label> 
-								<div class="input"> 
-									<select> 
-										<option>1</option> 
-										<option>2</option> 
-										<option>3</option> 
-										<option>4</option> 
-										<option>5</option> 
-									</select> 
-								</div> 
-							</div> <!-- /clearfix --> 
-							<div class="clearfix"> 
-								<label for="">Select</label> 
-								<div class="input"> 
-									<select class="medium"> 
-										<option>1</option> 
-										<option>2</option> 
-										<option>3</option> 
-										<option>4</option> 
-										<option>5</option> 
-									</select> 
-								</div> 
-							</div> <!-- /clearfix --> 
-							<div class="clearfix"> 
-								<label>Uneditable Input</label> 
-								<div class="input"> 
-									<span class="uneditable-input">Some Value Here</span> 
-								</div> 
-							</div> <!-- /clearfix --> 
-							<div class="clearfix"> 
-								<label for="disabledInput">Disabled Input</label> 
-								<div class="input"> 
-									<input class="xlarge disabled" id="disabledInput" name="disabledInput" size="30" type="text" placeholder="Disabled input here… carry on." disabled /> 
-								</div> 
-							</div> <!-- /clearfix --> 
-							<div class="clearfix error"> 
-								<label for="xlInput">X-Large Input</label> 
-								<div class="input"> 
-									<input class="xlarge error" id="xlInput" name="xlInput" size="30" type="text" /> 
-									<span class="help-inline">Small snippet of help text</span> 
-								</div> 
-							</div> <!-- /clearfix --> 
-						</fieldset> 
-						<fieldset> 
-							<legend>Example form legend</legend> 
-							<div class="clearfix"> 
-								<label for="prependedInput">Prepended Text</label> 
-								<div class="input"> 
-									<div class="input-prepend"> 
-										<span class="add-on">@</span> 
-										<input class="medium" id="prependedInput" name="prependedInput" size="16" type="text" /> 
-									</div> 
-								</div> 
-							</div> <!-- /clearfix --> 
-							<div class="clearfix"> 
-								<label for="prependedInput2">Prepended Checkbox</label> 
-								<div class="input"> 
-									<div class="input-prepend"> 
-										<label class="add-on"><input type="checkbox" name="" id="" value="" /></label> 
-										<input class="mini" id="prependedInput2" name="prependedInput2" size="16" type="text" /> 
-									</div> 
-								</div> 
-							</div> <!-- /clearfix --> 
-							<div class="clearfix"> 
-								<label for="appendedInput">Appended Checkbox</label> 
-								<div class="input"> 
-									<div class="input-append"> 
-										<input class="mini" id="appendedInput" name="appendedInput" size="16" type="text" /> 
-										<label class="add-on active"><input type="checkbox" name="" id="" value="" checked="checked" /></label> 
-									</div> 
-								</div> 
-							</div> <!-- /clearfix --> 
-							<div class="clearfix"> 
-								<label for="xlInput">File Input</label> 
-								<div class="input"> 
-									<input class="input-file" id="fileInput" name="fileInput" type="file" /> 
-								</div> 
-							</div> <!-- /clearfix --> 
-						</fieldset> 
-						<fieldset> 
-							<legend>Example form legend</legend> 
-							<div class="clearfix"> 
-								<label id="optionsCheckboxes">List of Options</label> 
-								<div class="input"> 
-									<ul class="inputs-list"> 
-										<li> 
-											<label> 
-												<input type="checkbox" name="optionsCheckboxes" value="option1" /> 
-												<span>Option one is this and that&mdash;be sure to include why it’s great</span> 
-											</label> 
-										</li> 
-										<li> 
-											<label> 
-												<input type="checkbox" name="optionsCheckboxes" value="option2" /> 
-												<span>Option two can also be checked and included in form results</span> 
-											</label> 
-										</li> 
-										<li> 
-											<label> 
-												<input type="checkbox" name="optionsCheckboxes" value="option2" /> 
-												<span>Option three can&mdash;yes, you guessed it&mdash;also be checked and included in form results</span> 
-											</label> 
-										</li> 
-										<li> 
-											<label class="disabled"> 
-												<input type="checkbox" name="optionsCheckboxes" value="option2" disabled /> 
-												<span>Option four cannot be checked as it is disabled.</span> 
-											</label> 
-										</li> 
-									</ul> 
-									<span class="help-block"> 
-										<strong>Note:</strong> Labels surround all the options for much larger click areas and a more usable form.
-									</span> 
-								</div> 
-							</div> <!-- /clearfix --> 
-							<div class="clearfix"> 
-								<label>Date Range</label> 
-								<div class="input"> 
-									<div class="inline-inputs"> 
-										<input class="small" type="text" value="May 1, 2011" /> 
-										<input class="mini" type="text" value="12:00am" /> 
-										to
-										<input class="small" type="text" value="May 8, 2011" /> 
-										<input class="mini" type="text" value="11:59pm" /> 
-										<span class="help-inline">All times are shown as Pacific Standard Time (GMT -08:00).</span> 
-									</div> 
-								</div> 
-							</div> <!-- /clearfix --> 
-							<div class="clearfix"> 
-								<label for="textarea">Textarea</label> 
-								<div class="input"> 
-									<textarea class="xxlarge" id="textarea" name="textarea"></textarea> 
-									<span class="help-block"> 
-										Block of help text to describe the field above if need be.
-									</span> 
-								</div> 
-							</div> <!-- /clearfix --> 
-							<div class="clearfix"> 
-								<label id="optionsRadio">List of Options</label> 
-								<div class="input"> 
-									<ul class="inputs-list"> 
-										<li> 
-											<label> 
-												<input type="checkbox" name="optionsCheckboxes" value="option1" /> 
-												<span>Option one is this and that&mdash;be sure to include why it’s great</span> 
-											</label> 
-										</li> 
-										<li> 
-											<label> 
-												<input type="checkbox" name="optionsCheckboxes" value="option2" /> 
-												<span>Option two can also be checked and included in form results</span> 
-											</label> 
-										</li> 
-									</ul> 
-								</div> 
-							</div> <!-- /clearfix --> 
-							<div class="actions"> 
-								<button type="submit" class="btn primary">Save Changes</button> 
-								<button type="reset" class="btn">Cancel</button> 
-							</div> 
-						</fieldset> 
-					</form> 
-				</div> 
-			</div> 
- 
-			<br /> 
- 
-			<div class="row"> 
-				<div class="span4 columns"> 
-					<h2>Stacked forms</h2> 
-					<p>Add <code>.form-stacked</code> to your form’s HTML and you’ll have labels on top of their fields instead of to their left. This works great if your forms are short or you have two columns of inputs for heavier forms.</p> 
-				</div> 
-				<div class="span12 columns"> 
-					<form action="" class="form-stacked"> 
-						<fieldset> 
-							<legend>Example form legend</legend> 
-							<div class="clearfix"> 
-								<label for="">X-Large Input</label> 
-								<div class="input"> 
-									<input class="xlarge" id="xlInput" name="xlInput" size="30" type="text" /> 
-								</div> 
-							</div> <!-- /clearfix --> 
-							<div class="clearfix"> 
-								<label for="">Select</label> 
-								<div class="input"> 
-									<select> 
-										<option>1</option> 
-										<option>2</option> 
-										<option>3</option> 
-										<option>4</option> 
-										<option>5</option> 
-									</select> 
-								</div> 
-							</div> <!-- /clearfix --> 
-						</fieldset> 
-						<fieldset> 
-							<legend>Example form legend</legend> 
-							<div class="clearfix"> 
-								<label id="optionsCheckboxes">List of Options</label> 
-								<div class="input"> 
-									<ul class="inputs-list"> 
-										<li> 
-											<label> 
-												<input type="checkbox" name="optionsCheckboxes" value="option1" /> 
-												<span>Option one is this and that&mdash;be sure to include why it’s great</span> 
-											</label> 
-										</li> 
-										<li> 
-											<label> 
-												<input type="checkbox" name="optionsCheckboxes" value="option2" /> 
-												<span>Option two can also be checked and included in form results</span> 
-											</label> 
-										</li> 
-									</ul> 
-									<span class="help-block"> 
-										<strong>Note:</strong> Labels surround all the options for much larger click areas and a more usable form.
-									</span> 
-								</div> 
-							</div> <!-- /clearfix --> 
-						</fieldset> 
-						<div class="actions"> 
-							<button type="submit" class="btn primary">Save Changes</button> 
-							<button type="reset" class="btn">Cancel</button> 
-						</div> 
-					</form> 
-				</div> 
-			</div> 
- 
-			<div class="row"> 
-				<div class="span4 columns"> 
-					<h2>Buttons</h2> 
-					<p>As a convention, buttons are used for actions while links are used for objects. For instance, "Download" could be a button and "recent activity" could be a link.</p> 
-					<p>All buttons default to a light gray style, but a blue <code>.primary</code> class is available. Plus, rolling your own styles is easy peasy.</p> 
-				</div> 
-				<div class="span12 columns"> 
-					<h3>Example buttons</h3> 
-					<p>Button styles can be applied to anything with the <code>.btn</code> applied. Typically you’ll want to apply these to only <code>&lt;a&gt;</code>, <code>&lt;button&gt;</code>, and select <code>&lt;input&gt;</code> elements. Here’s how it looks:</p> 
-					<div class="well" style="padding: 14px 19px;"> 
-						<button type="submit" class="btn primary">Submit</button> 
-						<button type="submit" class="btn">Cancel</button> 
-					</div> 
-					<h3>Alternate sizes</h3> 
-					<p>Fancy larger or smaller buttons? Have at it!</p> 
-					<div class="well"> 
-						<a href="#" class="btn large primary">Primary action</a> 
-						<a href="#" class="btn large">Action</a> 
-					</div> 
-					<div class="well" style="padding: 16px 19px;"> 
-						<a href="#" class="btn small primary">Primary action</a> 
-						<a href="#" class="btn small">Action</a> 
-					</div> 
-					<h3>Disabled state</h3> 
-					<p>For buttons that are not active or are disabled by the app for one reason or another, use the disabled state. That’s <code>.disabled</code> for links and <code>:disabled</code> for <code>&lt;button&gt;</code> elements.</p> 
-					<h4>Links</h4> 
-					<div class="well"> 
-						<a href="#" class="btn large primary disabled">Primary action</a> 
-						<a href="#" class="btn large disabled">Action</a> 
-					</div> 
-					<h4>Buttons</h4> 
-					<div class="well"> 
-						<button class="btn large primary" disabled>Primary action</button> 
-						<button class="btn large" disabled>Action</button> 
-					</div> 
-				</div> 
-			</div> 
 		</section> 
 		
 		<section id="demo"> 
 			<div class="page-header"> 
-				<h1>CCN4B Demo - CCN4BSnarf Service</h1> 
+				<h1>CCN4B Demo - CCN4BSnarf Service (Coming Soon)</h1> 
 			</div> 
 			<h2>A simple demonstration of CCNX4B.js</h2> 
 			
@@ -404,7 +147,7 @@
  
 			<div class="row"> 
 				<div class="span5 columns"> 
-					<h4>What is it</h4> 
+					<h4>What is it?</h4> 
 					<p>Snarf Service lets you manage your CCNx Node in your browser and snarf content to share with other CCN4B users.</p> 
 				</div> 
 				<div class="span5 columns"> 
@@ -421,11 +164,6 @@
 				</div> 
 			</div> 
 			<div class="row"> 
-				<div class="span4 columns"> 
-					<h2>Tabs and pills</h2> 
-					<p>Create simple secondary navigation with a <code>&lt;ul&gt;</code>. Swap between tabs or pills by adding the appropriate class.</p> 
-					<p>Great for sub-sections of content like our account settings pages and user timelines for toggling between pages of like content. Available in tabbed or pill styles.</p> 
-				</div> 
 				<div class="span12 columns"> 
 					<ul class="pills"> 
 						<li class="active"><a href="#pill_services">Services</a></li> 
@@ -436,7 +174,7 @@
 						<li><a href="#pill_analytics">Analytics</a></li>
 					</ul> 
 					
-					<div id="pill_content">
+					<div id="pill_content" style="display: none;">
 						<h4>CCNx Content Management</h4> 
 						<h3>Content Sharing</h3>
 						<div class="well"> 
@@ -470,7 +208,7 @@
 						<h3>CCNx Names</h3>
 						<span id="dumpofnames"></span>
 					</div>
-					<div id="pill_configuration">
+					<div id="pill_configuration" style="display: none;">
 						<h4>CCN Node Configuration</h4>
 						<form action="" class="form-stacked">
 						      <fieldset>
@@ -552,20 +290,8 @@
 							</div>
 							
 						</div>
-						<!-- >
-						<div class="row"> 
-							<div class="row show-grid"> 
-								<div class="span2 columns">2</div> 
-								<div class="span2 columns">2</div> 
-								<div class="span2 columns">2</div> 
-								<div class="span2 columns">2</div> 
-								<div class="span2 columns">2</div> 
-								<div class="span2 columns">2</div>
-							</div>
-						</div>
-						-->
 					</div>
-					<div id="pill_services" style="display: none;">
+					<div id="pill_services">
 						<h4>CCNx Service Management</h4> 
 						<h3>CCND Admin</h3>
 						<div class="well"> 
@@ -583,8 +309,11 @@
 					<div id="pill_analytics" style="display: none;">
 						<h4>CCNx Node Analytics</h4> 
 						<h3>Throughput</h3>
-						<p>Put a cool real time chart here</p>
-						<canvas id="chart" width="100" height="100"></canvas>
+						<canvas id="chart" width="400" height="100"></canvas>
+					</div>
+					<div id="pill_logs" style="display: none;">
+						<h4>CCND Logs</h4> 
+						<p>Add realtime streaming logs - TODO</p>
 					</div>
 					
 				</div> <!-- end div class="span12 columns"-->
@@ -601,6 +330,7 @@
 					<li>Broadband may be widely unavailable</li>
 					<li>Mobile internet is not a universal right</li>
 					<li>WiFi is not always on</li>
+					<li>Cost of (mobile and fixed-lin) broadband services may rise, not fall, over time, if competition in a particular country decreases
 					<li>24/7 always-on power is a luxury</li>
 					<li>Traditional Consumers are an anomaly unique to developed countries</li>
 					<li>Governments may drive innovation more than capitalist market forces</li>
@@ -615,25 +345,21 @@
 				<ul>
 					<li>Dr. Kim, CTO of Education, Stanford, ED of Seeds of Empowerment</li>
 					<li>Amadou Daffe, Co-founder, Coders4Africa</li>
-					<li>Marvell Semiconductor</li>
-				</ul>
-			</div> 
-		</section>
-		<section id="collaborators"> 
-			<div class="page-header"> 
-				<h1>Collaborators</h1>
-				<ul>
-					<li>Dr. Kim, CTO of Education, Stanford, ED of Seeds of Empowerment</li>
-					<li>Amadou Daffe, Co-founder, Coders4Africa</li>
-					<li>Marvell Semiconductor</li>
+					<li>Marvell Semiconductor, PlugComputer.org (ARM-based embedded hardware)</li>
 				</ul>
 			</div> 
 		</section>
 		<section id="whyjs"> 
 			<div class="page-header"> 
-				<h1>Why Javascript</h1>
+				<h1>Why Javascript (JS)?</h1>
 				<ul>
-					<li>list some good bullets</li>
+					<li>JS is one of the most commonly understood languages</li>
+					<li>JS is increasingly important as the glue between the major pieces of the web runtime: HTML5/CSS3/DOM</li>
+					<li>JS is based on open standards, and tracks to an open specification in active development</li>
+					<li>JS-based VMs/runtimes have major financial support from Mozilla, Apple, and Google.</li>
+					<li>JS performance has increased dramatically with optimizations and improvements in VM technology</li>
+					<li>Front-end JS developers fetch a premium in the market</li>
+					<li>Server-Side development of JS as a web middleware is being rapidly adopted by developers formerly doing PHP, Java, or ruby</li>
 				</ul>
 			</div> 
 		</section>
@@ -642,7 +368,10 @@
 				<h1>Implementation</h1>
 				<h3>Various Approaches</h3>
 				<ul>
-					<li>List out the choices</li>
+					<li>Browser Plugin to manage mapping of URLs to CCNx names, and services</li>
+					<li>Pure client-side library for creating CCNx packets and communicating with CCNx services</li>
+					<li>Web middleware proxy, developed as an Apache Mod or similar</li>
+					<li><strong>Node.js Middleware as a proxy to CCNx services, and a CCNx client API to communicate with CCNx services</strong></li>
 				</ul>
 			</div> 
 		</section>
@@ -650,9 +379,13 @@
 			<div class="page-header"> 
 				<h1>Status</h1>
 				<ul>
-					<li>Dr. Kim, CTO of Education, Stanford, ED of Seeds of Empowerment</li>
-					<li>Amadou Daffe, Co-founder, Coders4Africa</li>
-					<li>Marvell Semiconductor</li>
+					<li>late July 2011 - CCN4B.js paper accepted for CCNxCon 2011</li>
+					<li>late July 2011 - setup git repositories</li>
+					<li>early Aug 2011 - implement CCN4BName.js to handle client side parsing, validation, and encoding of CCNx naming/uri schemes</li>
+					<li>Mid Aug 2011 - implement a usable server middleware with Node.js + Socket.io (Jumbosocket)</li>
+					<li>Early Sept 2011 - implement first cut at CCNx integration on the server middleware with CCN4BNode project, performs a few basic commands as an admin console around CCND, get realtime status, and get name information out of repo.</li>
+					<li>Early Sept 2011 - Publish first CCNx package into NPM, called ccn4bnode</li>
+					<li>Early Setp 2011 - Present CCN4B.js at CCNxCon 2011 @ PARC</li>
 				</ul>
 			</div> 
 		</section>
@@ -660,7 +393,19 @@
 			<div class="page-header"> 
 				<h1>Roadmap</h1>
 				<ul>
-					<li>List out roadmap items</li>
+					<li>Implement CCNB2JSON.js library to create a way to encode/decode CCNB binary objects for packet generation</li>
+					<li>Come up with a few recipes for creating and sending CCNx packets from the client side and from the server side</li>
+					<li>Implement simple demo web app - Content Snarf</li>
+					<li>Define implementation/topology for a CCNx node (fib, cs, pit)</li>
+					<li>Strategy for configuration management - Use Redis</li>
+					<li>Implement log rotation strategy</li>
+					<li>Refactor project  structure to move ccn4bnode.html demo site out and rename, put into ccn4b.js project, and update project deps, as jumbosocket master master should be the base server middleware, and development of apps should go on outside</li>
+					<li>Implement Content Repo - Use MongoDB</li>
+					<li>Strategy for sync</li>
+					<li>Integration crypto library on client side</li>
+					<li>Review options for crypto library on server side - Need something we can optimize for ARM</li>
+					<li>Key Management Strategy</li>
+					<li>User Management Strategy</li>
 				</ul>
 			</div> 
 		</section>

@@ -35,12 +35,25 @@
  * 
  **/
 
+// Randomly add a data point every 500ms
+var random = new TimeSeries();
+setInterval(function() {
+  random.append(new Date().getTime(), Math.random() * 10000);
+}, 500);
+
+function createTimeline() {
+  var chart = new SmoothieChart();
+  chart.addTimeSeries(random, { strokeStyle: 'rgba(0, 255, 0, 1)', fillStyle: 'rgba(0, 255, 0, 0.2)', lineWidth: 4 });
+  chart.streamTo(document.getElementById("chart"), 500);
+}
+
 $(document).ready(function() {
 	pingStatusInterval(); // Check if ccnd is alive every so often
 	statsInterval(); // Check ccnd status every so often
 	rssInterval(); // Check server memory every so often
 	dumpnamesInterval(); // Get dump of names every so often
-	createTimeline(); // Create a fake chart 
+	// XXX Why doesn't this work here :( 
+	// createTimeline(); // Create a fake chart 
 	
 	$('#ccn_stop').click(function() {
 		console.log('ccn_stop');
@@ -229,17 +242,7 @@ function pingStatusHandler(data) {
 	}
 }
 
-// Randomly add a data point every 500ms
-var random = new TimeSeries();
-setInterval(function() {
-  random.append(new Date().getTime(), Math.random() * 10000);
-}, 500);
 
-function createTimeline() {
-  var chart = new SmoothieChart();
-  chart.addTimeSeries(random, { strokeStyle: 'rgba(0, 255, 0, 1)', fillStyle: 'rgba(0, 255, 0, 0.2)', lineWidth: 4 });
-  chart.streamTo(document.getElementById("chart"), 500);
-}
 
 function handleError(jqXHR, textStatus, errorThrown) {
 	// XXX Implement?
