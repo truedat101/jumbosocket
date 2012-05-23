@@ -69,6 +69,11 @@ If you want to build on top of this, the best thing is to create a server.js fil
 
 ## Release Notes
 
+v0.1.0
+-------
+* Converted project into NPM module
+* Moved sample web site into examples folder
+
 v0.0.35
 -------
 * Still a bunch of cruft related to the sample web site.  
@@ -88,3 +93,4 @@ TODO: Add links
 * Node.js - Ry for creating a node we can use
 * node_chat - Ry and inspiration from fu.js -> js.js
 * socket.io - Guillermo Rauch
+* nlogger - ? Need the name
