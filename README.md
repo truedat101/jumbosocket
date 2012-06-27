@@ -61,11 +61,11 @@ If you want to build on top of this, the best thing is to create a server.js fil
 		
 ## Troubleshooting
 
-* If you are on Mac OS X, there is a good chance you didn't build node.js with SSL enabled, mainly because there is problem at the configure phase finding an i64 based openssl library and headers.  If you get errors running this socket.io demo or any of the others, there is a good chance it is a crypto error, at runtime.  Socket.io needs the crypto enabled in Node.js.
+* If you are on Mac OS X (before 10.6), there is a good chance you didn't build node.js with SSL enabled, mainly because there is problem at the configure phase finding an i64 based openssl library and headers.  If you get errors running this socket.io demo or any of the others, there is a good chance it is a crypto error, at runtime.  Socket.io needs the crypto enabled in Node.js.
 
 ## Suggestions and Questions
 
-* Post them on the google group.  I don't really know anything about socket.io and while proficient in node.js, I am not a JS developer by trade, so there are surely better and more efficient ways to code.  Send me your ideas.
+* Post them on github.  I don't really know anything about socket.io and while proficient in node.js, I am not a JS developer by trade, so there are surely better and more efficient ways to code.  Send me your ideas.
 
 ## Release Notes
 v0.1.2
@@ -100,4 +100,4 @@ TODO: Add links
 * Node.js - Ry for creating a node we can use
 * node_chat - Ry and inspiration from fu.js -> js.js
 * socket.io - Guillermo Rauch
-* nlogger - ? Need the name
+* Javascript - Brendan Eich
