@@ -1,6 +1,6 @@
 /**
 #
-#Copyright (c) 2011 Razortooth Communications, LLC. All rights reserved.
+#Copyright (c) 2011-2012 Razortooth Communications, LLC. All rights reserved.
 #
 #Redistribution and use in source and binary forms, with or without modification,
 #are permitted provided that the following conditions are met:
@@ -28,11 +28,13 @@
 #SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 **/
 
-var js =  require("./js.js"),
-	sys = require("sys"),
+var JS =  require("../lib/js/js.js").JS,
+	util = require("util"),
 	url = require('url');
-
-js.listenHttpWS(js.CONFIG['HTTPWS_PORT'], js.address);
+var js = new JS();
+console.log(js.CONFIG);
+js.create(js.address, js.CONFIG['HTTPWS_PORT']);
+js.listenHttpWS();
 js.listenSocketIO(js.js_handler); // This is initially set to null, so it will fallback to use js.DEFAULT_JS_HANDLER
 
 js.get("/helloworld", function(req, res) {
@@ -48,7 +50,7 @@ js.get("/helloworld", function(req, res) {
 js.getterer("/helloworldly/[\\w\\.\\-]+", function(req, res) {
         var route = url.parse(req.url).pathname.split('/')[2];
         var body = 'helloworldy on route ' + route;
-        sys.puts('helloworldly');
+        util.puts('helloworldly');
         res.writeHead(200, {
           'Content-Length': body.length,
           'Content-Type': 'text/plain'
