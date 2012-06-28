@@ -1,11 +1,11 @@
 {
   "name": "js.js",
   "description": "Jumbosocket (js.js) is a small server for big ideas, offering a small template starter project, inspired by fu.js and utilizing socket.io",
-  "version": "0.1.3",
-  "homepage": "http://code.google.com/p/jumbosocket",
+  "version": "0.1.4",
+  "homepage": "https://github.com/truedat101/jumbosocket",
   "repository": {
 	"type": "git",
-	"url": "http://github.com:truedat101/jumbosocket.git"
+	"url": "git://github.com/truedat101/jumbosocket.git"
   },
   "author": "@dkords <dkords@gmail.com>",
   "contributors" :	[ "Simba",

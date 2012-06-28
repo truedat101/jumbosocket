@@ -1,6 +1,6 @@
 ## Goal
 
-The goal of Jumbosocket is to provide a boilerplate for quickstart of a node.js + socket.io app.  While this is easily possible in a few lines of JS code, it is nice to have a tested set of components to start using.  The HTML5 boilerplate is provided, along with CSS stubs, and a few JS scripts for a basic app, plus the needed JS libraries we all depend on for things.  With this setup, you should be able to get started coding in about 5 minutes or less.  This app doesn't do much, but you can at least prove your socket.io is working.  A secondary goal is that the code be short enough that you can walk through every line of the code an understand what the server is doing.  And in that spirit, it was not an objective that you have to go out and learn a framework to be productive, which can take days, weeks, months, or years.
+The goal of Jumbosocket is to provide a boilerplate for quickstart of a node.js + socket.io app.  While this is easily possible in a few lines of JS code, it is nice to have a tested set of components to start using.  The HTML5 boilerplate is provided, along with CSS stubs, and a few JS scripts for a basic app, plus the needed JS libraries we all depend on for things.  With this setup, you should be able to get started coding in about 5 minutes or less.  This app doesn't do much, but you can at least prove your socket.io setup is working.  A secondary goal is that the code be short enough that you can walk through every line of the code an understand what the server is doing.  And in that spirit, it was not an objective that you have to go out and learn a framework to be productive, which can take days, weeks, months, or years.
 
 ## Requirements
 * Deliverable as an NPM bundle
@@ -9,15 +9,15 @@ The goal of Jumbosocket is to provide a boilerplate for quickstart of a node.js 
 
 ## Installation
 
-You can simply run 'npm install jumbosocket'
+You can simply run 'npm install js.js'
 
 -or- 
 
 Grab the source and install the prerequisites: 
-* Node.js 0.4.x or greater (not sure what Socket.io needs to work)
+* Node.js 0.6.x or greater (not sure what Socket.io needs these days to work)
 * NPM (recommended)
 * nLogger (used for nicer logging facilities).  This may change in the future.  Not quite sure which one to use yet, but this works for now.
-* Socket.io (install via NPM or include the source so it is available in the require path) - use v0.8.x .  
+* Socket.io (install via NPM or include the source so it is available in the require path) - use v0.7.x .  
 
 
 ## Usage
@@ -44,7 +44,7 @@ and then run with:
 nodemon js.js
 
 A better way: Create an server wrapper to add your own routes and socket.io handler.  
-
+cd /examples
 node examplejs-server.js
 
 ## Development
@@ -68,6 +68,12 @@ If you want to build on top of this, the best thing is to create a server.js fil
 * Post them on github.  I don't really know anything about socket.io and while proficient in node.js, I am not a JS developer by trade, so there are surely better and more efficient ways to code.  Send me your ideas.
 
 ## Release Notes
+v0.1.4
+-------
+* Cleanup some of the project metadata.
+* Cleanup README.md
+* Add nice devDependencies so some day I can do TDD.
+
 v0.1.3
 -------
 * forgot to bump version in package.json
