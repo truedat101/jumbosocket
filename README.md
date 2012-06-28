@@ -68,6 +68,11 @@ If you want to build on top of this, the best thing is to create a server.js fil
 * Post them on github.  I don't really know anything about socket.io and while proficient in node.js, I am not a JS developer by trade, so there are surely better and more efficient ways to code.  Send me your ideas.
 
 ## Release Notes
+v0.1.3
+-------
+* forgot to bump version in package.json
+* merge js-npm branch into master
+
 v0.1.2
 -------
 * Fix missing routes for default routes (/, /css, /scripts, /images)
