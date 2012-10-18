@@ -16,7 +16,7 @@ You can simply run 'npm install js.js'
 Grab the source and install the prerequisites: 
 * Node.js 0.6.x or greater (not sure what Socket.io needs these days to work)
 * NPM (recommended)
-* nLogger (used for nicer logging facilities).  This may change in the future.  Not quite sure which one to use yet, but this works for now.
+* Winston (used for nicer logging facilities).
 * Socket.io (install via NPM or include the source so it is available in the require path) - use v0.7.x .  
 
 
@@ -43,6 +43,8 @@ and then run with:
 
 nodemon js.js
 
+Also, forever is another way to go when you want to manage this as a service.
+
 A better way: Create an server wrapper to add your own routes and socket.io handler.  
 cd /examples
 node examplejs-server.js
@@ -61,13 +63,18 @@ If you want to build on top of this, the best thing is to create a server.js fil
 		
 ## Troubleshooting
 
-* If you are on Mac OS X (before 10.6), there is a good chance you didn't build node.js with SSL enabled, mainly because there is problem at the configure phase finding an i64 based openssl library and headers.  If you get errors running this socket.io demo or any of the others, there is a good chance it is a crypto error, at runtime.  Socket.io needs the crypto enabled in Node.js.
+* If you experience problems with Socket.io crytp, there is a good chance you didn't build node.js with SSL enabled, mainly because there is problem at the configure phase finding an i64 based openssl library and headers.  If you get errors running this socket.io demo or any of the others, there is a good chance it is a crypto error, at runtime.  Socket.io needs the crypto enabled in Node.js.
 
 ## Suggestions and Questions
 
 * Post them on github.  I don't really know anything about socket.io and while proficient in node.js, I am not a JS developer by trade, so there are surely better and more efficient ways to code.  Send me your ideas.
 
 ## Release Notes
+v0.1.5
+______
+* Replace nLogger with Winston
+* Bump version
+
 v0.1.4
 -------
 * Cleanup some of the project metadata.
