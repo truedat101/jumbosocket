@@ -32,6 +32,7 @@ var JS =  require("../lib/js/js.js").JS,
 	util = require("util"),
 	url = require('url');
 var js = new JS();
+js.CONFIG['DOCROOT'] = './';
 console.log(js.CONFIG);
 js.create(js.address, js.CONFIG['HTTPWS_PORT']);
 js.listenHttpWS();
