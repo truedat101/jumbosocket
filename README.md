@@ -2,10 +2,12 @@
 
 The goal of Jumbosocket is to provide a boilerplate for quickstart of a node.js + socket.io app.  While this is easily possible in a few lines of JS code, it is nice to have a tested set of components to start using.  The HTML5 boilerplate is provided, along with CSS stubs, and a few JS scripts for a basic app, plus the needed JS libraries we all depend on for things.  With this setup, you should be able to get started coding in about 5 minutes or less.  This app doesn't do much, but you can at least prove your socket.io setup is working.  A secondary goal is that the code be short enough that you can walk through every line of the code an understand what the server is doing.  And in that spirit, it was not an objective that you have to go out and learn a framework to be productive, which can take days, weeks, months, or years.
 
-## Requirements
+## Design Requirements
 * Deliverable as an NPM bundle
 * Users of the library simply require "js"
 * Users of the library can easily add their own routes
+* Users don't need to think much about configuration
+* Users can quickly serve static and dynamic content without needing to deal with my opinions about how directories should be structured
 
 ## Installation
 
@@ -67,9 +69,14 @@ If you want to build on top of this, the best thing is to create a server.js fil
 
 ## Suggestions and Questions
 
-* Post them on github.  I don't really know anything about socket.io and while proficient in node.js, I am not a JS developer by trade, so there are surely better and more efficient ways to code.  Send me your ideas.
+*   Post them on github.  I don't really know anything about socket.io and while proficient in node.js, I am not a JS developer by trade, so there are surely better and more efficient ways to code.  Send me your ideas.
 
 ## Release Notes
+
+v0.1.8
+______
+* Add MSGS attribute to any JS server instance.
+* Fix path discovery so that the CONFIG['DOCROOT'] is resolved to the absolute path of require.main.filename (the path of the invoking script, not the module path).
 
 v0.1.7
 ______
