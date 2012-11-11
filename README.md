@@ -73,6 +73,10 @@ If you want to build on top of this, the best thing is to create a server.js fil
 
 ## Release Notes
 
+v0.1.9
+______
+* Add error messages as they occur to MSGS
+
 v0.1.8
 ______
 * Add MSGS attribute to any JS server instance.
