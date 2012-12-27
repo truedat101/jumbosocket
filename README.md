@@ -73,6 +73,15 @@ If you want to build on top of this, the best thing is to create a server.js fil
 
 ## Release Notes
 
+v0.1.11
+______
+* Add missing release notes updates for v0.1.10
+* Add method to internalServerError to take a message
+
+v0.1.10
+______
+* Migrate to Socket.io 0.9.x
+
 v0.1.9
 ______
 * Add error messages as they occur to MSGS
