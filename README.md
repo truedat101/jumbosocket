@@ -73,6 +73,14 @@ If you want to build on top of this, the best thing is to create a server.js fil
 
 ## Release Notes
 
+v0.1.14
+______
+* Fix package.json access to use relative path
+
+v0.1.13
+______
+* Add package.json access and utilize for default about route
+
 v0.1.12
 ______
 * Add REQ, RES to internal scope
