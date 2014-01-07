@@ -73,6 +73,9 @@ If you want to build on top of this, the best thing is to create a server.js fil
 
 ## Release Notes
 
+v0.1.15
+* a4c5f8b refs #1 Fix first bug on this project.  Add way to set our real IP address when we bind to 0.0.0.0
+
 v0.1.14
 ______
 * Fix package.json access to use relative path
