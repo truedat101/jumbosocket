@@ -73,6 +73,9 @@ If you want to build on top of this, the best thing is to create a server.js fil
 
 ## Release Notes
 
+v0.1.16
+* issue #4 Simplify getting of ip addresses, limit to non-loopback ipv4 until able to re-implement using node's os.networkInterfaces()
+
 v0.1.15
 * a4c5f8b refs #1 Fix first bug on this project.  Add way to set our real IP address when we bind to 0.0.0.0
 
