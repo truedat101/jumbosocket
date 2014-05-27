@@ -1,35 +1,52 @@
 {
   "name": "js.js",
   "description": "Jumbosocket (js.js) is a small server for big ideas, offering a small template starter project, inspired by fu.js and utilizing socket.io",
-  "version": "0.1.16",
+  "version": "0.1.17",
   "homepage": "https://github.com/truedat101/jumbosocket",
   "repository": {
-	"type": "git",
-	"url": "git://github.com/truedat101/jumbosocket.git"
+    "type": "git",
+    "url": "git://github.com/truedat101/jumbosocket.git"
   },
   "author": "@dkords <dkords@gmail.com>",
-  "contributors" :	[ "Simba",
-					  "Keiko",
-					  "Fish - RIP",
-					  "Benny - RIP"], 
+  "contributors": [
+    "Simba",
+    "Keiko",
+    "Fish - RIP",
+    "Benny - RIP"
+  ],
   "dependencies": {
-	"socket.io": "0.9.x",
-	"winston": "0.6.2"
+    "socket.io": "0.9.x",
+    "winston": "0.6.2"
   },
   "devDependencies": {
-	"mocha": ">=0.11.0",
-	"chai": ">=1.0.1",
-	"sandboxed-module": ">=0.1.3",
-	"sinon": ">=1.3.4"
+    "chai": ">=1.0.1",
+    "grunt": "0.4.5",
+    "grunt-bump": "0.0.14",
+    "grunt-contrib-concat": "~0.4.0",
+    "grunt-contrib-jshint": "~0.10.0",
+    "grunt-contrib-nodeunit": "~0.3.3",
+    "grunt-contrib-qunit": "~0.4.0",
+    "grunt-contrib-uglify": "~0.4.0",
+    "grunt-contrib-watch": "~0.4.0",
+    "grunt-jsonlint": "~1.0.4",
+    "grunt-karma": "^0.8.3",
+    "grunt-mocha-test": "~0.10.2",
+    "grunt-xml-validator": "~1.1.1",
+    "karma": "^0.12.16",
+    "karma-chrome-launcher": "^0.1.4",
+    "karma-jasmine": "^0.1.5",
+    "mocha": "1.18.2",
+    "sandboxed-module": ">=0.1.3",
+    "sinon": ">=1.3.4"
   },
   "scripts": {
-	"test": "mocha -R tap"
+    "test": "mocha -R tap"
   },
   "main": "./lib/js/index",
   "directories": {
-	"lib": "./lib/js"
+    "lib": "./lib/js"
   },
   "engines": {
-	"node": ">=0.6.0"
+    "node": ">=0.6.0"
   }
 }

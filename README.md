@@ -16,10 +16,10 @@ You can simply run 'npm install js.js'
 -or- 
 
 Grab the source and install the prerequisites: 
-* Node.js 0.6.x or greater (not sure what Socket.io needs these days to work)
+* Node.js 0.8.x or greater (not sure what Socket.io needs these days to work)
 * NPM (recommended)
 * Winston (used for nicer logging facilities).
-* Socket.io (install via NPM or include the source so it is available in the require path) - use v0.7.x .  
+* Socket.io (install via NPM or include the source so it is available in the require path) - use v0.9.x .  
 
 
 ## Usage
@@ -38,12 +38,9 @@ As a module, require js.
 
 node js.js to run a default service (doesn't do much other than play pingpong with socket.io messages and serve some test routes).
 
-If you are actively developing, install nodemon:
-npm install nodemon
-
 and then run with:
 
-nodemon js.js
+node js.js
 
 Also, forever is another way to go when you want to manage this as a service.
 
@@ -59,8 +56,6 @@ If you want to build on top of this, the best thing is to create a server.js fil
 		/helloworld - A basic static html page served up by node
 		/helloworldly/<some path> - A basic static html page using the route filtering feature of this server.  It will print <some path> to the screen.
 		/about - about this demo
-		/presenter - a simple group presenter tool (TODO, not implemented)
-		/viewer - a simple group presentation viewer (TODO, not implemented)
 		/ - A simple socket.io demo showing basic messaging process
 		
 ## Troubleshooting
@@ -72,6 +67,11 @@ If you want to build on top of this, the best thing is to create a server.js fil
 *   Post them on github.  I don't really know anything about socket.io and while proficient in node.js, I am not a JS developer by trade, so there are surely better and more efficient ways to code.  Send me your ideas.
 
 ## Release Notes
+
+v0.1.17
+* Issue #5 Switch to using os.getNetworkInterface()
+* Issue #7 Add Gruntfile 'build'
+* Issue #10 Add mocha test
 
 v0.1.16
 * issue #4 Simplify getting of ip addresses, limit to non-loopback ipv4 until able to re-implement using node's os.networkInterfaces()
