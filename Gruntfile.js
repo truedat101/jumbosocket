@@ -30,7 +30,7 @@ module.exports = function(grunt) {
         }
     },
     jshint: {
-      files: ['Gruntfile.js', 'src/**/*.js', 'test/**/*.js'],
+      files: ['Gruntfile.js', 'examples/examplejs-server.js', 'src/**/*.js', 'test/**/*.js'],
       options: {
         // options here to override JSHint defaults
         globals: {
@@ -43,7 +43,7 @@ module.exports = function(grunt) {
     },
     xml_validator: {
       xmlval: {
-        src: [ 'data/**.xml']
+        src: [ 'test/**/*.xml']
       },
     },
     mochaTest: {

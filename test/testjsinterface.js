@@ -36,22 +36,22 @@ var js = new JS();
 // 
 describe('JS.CONFIG defaults', function(){
 	it('JS.CONFIG["DOCROOT"] should be not null, and set to default', function(){
-		assert.equal(js.CONFIG['DOCROOT'], process.cwd() + "/static");
+		assert.equal(js.CONFIG.DOCROOT, process.cwd() + "/static");
 	});
 
 	it('JS.CONFIG["HTTPWS_PORT"] should be not null, and set to 8000', function(){
-		assert.equal(js.CONFIG['HTTPWS_PORT'], 8000);
+		assert.equal(js.CONFIG.HTTPWS_PORT, 8000);
 	});
 
 	it('JS.CONFIG["LISTEN_ON_ADDRESS"] should be not null, and set to local interface', function(){
-		assert.notEqual(js.CONFIG['LISTEN_ON_ADDRESS'], null);
+		assert.notEqual(js.CONFIG.LISTEN_ON_ADDRESS, null);
 	});
 
 	it('JS.CONFIG["VERSION_TAG"] should be set to the latest', function(){
-		assert.equal(js.CONFIG['VERSION_TAG'], '0.1.16');
+		assert.equal(js.CONFIG.VERSION_TAG, '0.1.16');
 	});
 
 	it('JS.CONFIG["VERSION_DESCRIPTION"] should be not null, and set to default', function(){
-		assert.equal(js.CONFIG['VERSION_DESCRIPTION'], 'NPM package for Jumbosocket, affectionately known as JS.js');
+		assert.equal(js.CONFIG.VERSION_DESCRIPTION, 'NPM package for Jumbosocket, affectionately known as JS.js');
 	});
 });
