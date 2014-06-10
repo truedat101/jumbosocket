@@ -48,10 +48,14 @@ describe('JS.CONFIG defaults', function(){
 	});
 
 	it('JS.CONFIG["VERSION_TAG"] should be set to the latest', function(){
-		assert.equal(js.CONFIG.VERSION_TAG, '0.1.16');
+		assert.equal(js.CONFIG.VERSION_TAG, '0.1.18');
 	});
 
 	it('JS.CONFIG["VERSION_DESCRIPTION"] should be not null, and set to default', function(){
 		assert.equal(js.CONFIG.VERSION_DESCRIPTION, 'NPM package for Jumbosocket, affectionately known as JS.js');
 	});
+
+	//
+	// Add test cases to test the library
+	//
 });
