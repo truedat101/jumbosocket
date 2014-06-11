@@ -82,6 +82,9 @@ If you are one the release team (let me know if you want to work on this), and h
 
 ## Release Notes
 
+v0.1.19
+* Issue #11 Fix docroot issue.  Was a major reason Azure cloud deploy wasn't working
+
 v0.1.18
 * Issues #15,#14,#13 Fix lint, 404 errors work, and missing gitignore
 
