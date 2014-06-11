@@ -49,7 +49,21 @@ cd /examples
 node examplejs-server.js
 
 ## Development
-If you want to build on top of this, the best thing is to create a server.js file and require('./js.js');   Then you can just define your routes and any utility methods inside of server.js.  As I have recommended above, use nodemon or similar to speed up your dev cycles.  
+
+If you want to build on top of this, the best thing is to create a server.js file and require('./js.js');   Then you can just define your routes and any utility methods inside of server.js.  As I have recommended above, use nodemon or similar to speed up your dev cycles.
+
+## Releasing
+
+If you are one the release team (let me know if you want to work on this), and here's the release flow.
+
+* > git checkout dev
+* Do some work on some issues
+* Commit your work, with a message "refs #<ISSUE NUMBER> <oneline description>"
+* Test it, add some test cases under test/
+* Bump the release (just do a patch until we need a minor release):> grunt bump:patch
+* > git push origin HEAD
+* Publish to npm: npm publish
+* If all has gone well, merge onto master: git checkout master && git merge --log --no-ff origin/dev
 
 ## Demo Routes
 	On Port 8000:
@@ -60,13 +74,16 @@ If you want to build on top of this, the best thing is to create a server.js fil
 		
 ## Troubleshooting
 
-* If you experience problems with Socket.io crytp, there is a good chance you didn't build node.js with SSL enabled, mainly because there is problem at the configure phase finding an i64 based openssl library and headers.  If you get errors running this socket.io demo or any of the others, there is a good chance it is a crypto error, at runtime.  Socket.io needs the crypto enabled in Node.js.
+* If you experience problems with Socket.io crytpo, there is a good chance you didn't build node.js with SSL enabled, mainly because there is problem at the configure phase finding an i64 based openssl library and headers.  If you get errors running this socket.io demo or any of the others, there is a good chance it is a crypto error, at runtime.  Socket.io needs the crypto enabled in Node.js.
 
 ## Suggestions and Questions
 
 *   Post them on github.  I don't really know anything about socket.io and while proficient in node.js, I am not a JS developer by trade, so there are surely better and more efficient ways to code.  Send me your ideas.
 
 ## Release Notes
+
+v0.1.18
+* Issues #15,#14,#13 Fix lint, 404 errors work, and missing gitignore
 
 v0.1.17
 * Issue #5 Switch to using os.getNetworkInterface()
@@ -167,3 +184,4 @@ TODO: Add links
 * node_chat - Ry and inspiration from fu.js -> js.js
 * socket.io - Guillermo Rauch
 * Javascript - Brendan Eich
+* Grunt.js - For making Make for JS

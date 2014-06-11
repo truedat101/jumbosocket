@@ -32,9 +32,9 @@ var JS =  require("../lib/js/js.js").JS,
 	util = require("util"),
 	url = require('url');
 var js = new JS();
-js.CONFIG['DOCROOT'] = './';
+js.CONFIG.DOCROOT = './';
 console.log(js.CONFIG);
-js.create(js.address, js.CONFIG['HTTPWS_PORT']);
+js.create(js.address, js.CONFIG.HTTPWS_PORT);
 js.listenHttpWS();
 js.listenSocketIO(js.js_handler); // This is initially set to null, so it will fallback to use js.DEFAULT_JS_HANDLER
 
