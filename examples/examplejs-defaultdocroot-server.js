@@ -29,18 +29,19 @@
 **/
 
 //
-// Run this example from the local directory
+// Run this example from a different directory, and let the server figure out that 
+// by default it will look in the absolute path pointing to the examples dir
 // 
-// > node ./examplejs-server.js
+// > node <some other path to this examples directory>/examplejs-defaultdocroot-server.js
 //
-// It will look in ./ to find it's static assets
-// Not the best idea for production, but suitable for a sample
+// It will look in the default docroot (which is ../../examples) to find it's static assets
+// Normally, you want to set DOCROOT appropriate to your application
 //
 var JS =  require("../lib/js/js.js").JS,
 	util = require("util"),
 	url = require('url');
 var js = new JS();
-js.CONFIG.DOCROOT = './';
+// js.CONFIG.DOCROOT = './';
 console.log(js.CONFIG);
 js.create(js.address, js.CONFIG.HTTPWS_PORT);
 js.listenHttpWS();
