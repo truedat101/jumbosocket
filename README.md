@@ -3,6 +3,7 @@
 The goal of Jumbosocket is to provide a boilerplate for quickstart of a node.js + socket.io app.  While this is easily possible in a few lines of JS code, it is nice to have a tested set of components to start using.  The HTML5 boilerplate is provided, along with CSS stubs, and a few JS scripts for a basic app, plus the needed JS libraries we all depend on for things.  With this setup, you should be able to get started coding in about 5 minutes or less.  This app doesn't do much, but you can at least prove your socket.io setup is working.  A secondary goal is that the code be short enough that you can walk through every line of the code an understand what the server is doing.  And in that spirit, it was not an objective that you have to go out and learn a framework to be productive, which can take days, weeks, months, or years.
 
 ## Design Requirements
+
 * Deliverable as an NPM bundle
 * Users of the library simply require "js"
 * Users of the library can easily add their own routes
