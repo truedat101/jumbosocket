@@ -1,6 +1,6 @@
 /**
 #
-#Copyright (c) 2011-2014 Razortooth Communications, LLC. All rights reserved.
+#Copyright (c) 2011-2024 Razortooth Communications, LLC. All rights reserved.
 #
 #Redistribution and use in source and binary forms, with or without modification,
 #are permitted provided that the following conditions are met:
@@ -59,7 +59,7 @@ js.get("/helloworld", function(req, res) {
 js.getterer("/helloworldly/[\\w\\.\\-]+", function(req, res) {
         var route = url.parse(req.url).pathname.split('/')[2];
         var body = 'helloworldy on route ' + route;
-        util.puts('helloworldly');
+        console.log('helloworldly');
         res.writeHead(200, {
           'Content-Length': body.length,
           'Content-Type': 'text/plain'

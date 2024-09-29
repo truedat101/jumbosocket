@@ -63,7 +63,7 @@ js.get("/helloworld", function(req, res) {
 js.getterer("/helloworldly/[\\w\\.\\-]+", function(req, res) {
         var route = url.parse(req.url).pathname.split('/')[2];
         var body = 'helloworldy on route ' + route;
-        util.puts('helloworldly');
+        console.log('helloworldly');
         res.writeHead(200, {
           'Content-Length': body.length,
           'Content-Type': 'text/plain'
