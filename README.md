@@ -82,6 +82,9 @@ If you are one the release team (let me know if you want to work on this), and h
 
 ## Release Notes
 
+v0.2.2
+* Some metadata cleanup
+
 v0.2.1
 * migrate to node v20
 * remove excess dependencies
