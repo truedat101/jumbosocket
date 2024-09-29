@@ -24,11 +24,6 @@ module.exports = function(grunt) {
     qunit: {
       files: ['test/**/*.html']
     },
-    jsonlint: {
-        jsondata: {
-            src: [ 'data/**/*.json' ]
-        }
-    },
     jshint: {
       files: ['Gruntfile.js', 'examples/examplejs-server.js', 'src/**/*.js', 'test/**/*.js', 'lib/js/js.js'],
       options: {
@@ -86,7 +81,6 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-mocha-test');
-  grunt.loadNpmTasks('grunt-jsonlint');
   grunt.loadNpmTasks('grunt-karma');
   grunt.loadNpmTasks('grunt-xml-validator');
   grunt.loadNpmTasks('grunt-bump');

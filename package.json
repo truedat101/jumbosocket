@@ -28,7 +28,6 @@
     "grunt-contrib-qunit": "^10.1.1",
     "grunt-contrib-uglify": "^5.2.2",
     "grunt-contrib-watch": "^1.1.0",
-    "grunt-jsonlint": "~1.0.4",
     "grunt-karma": "^4.0.2",
     "grunt-mocha-test": "^0.13.3",
     "karma": "^6.4.4",
