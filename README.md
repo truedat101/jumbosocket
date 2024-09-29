@@ -17,9 +17,8 @@ You can simply run 'npm install js.js'
 -or- 
 
 Grab the source and install the prerequisites: 
-* Node.js 0.8.x or greater (not sure what Socket.io needs these days to work)
+* Node.js v20 or greater
 * NPM (recommended)
-* Winston (used for nicer logging facilities).
 * Socket.io (install via NPM or include the source so it is available in the require path) - use v0.9.x .  
 
 
@@ -82,6 +81,10 @@ If you are one the release team (let me know if you want to work on this), and h
 *   Post them on github.  I don't really know anything about socket.io and while proficient in node.js, I am not a JS developer by trade, so there are surely better and more efficient ways to code.  Send me your ideas.
 
 ## Release Notes
+
+v0.2.1
+* migrate to node v20
+* remove excess dependencies
 
 v0.1.19
 * Issue #11 Fix docroot issue.  Was a major reason Azure cloud deploy wasn't working
