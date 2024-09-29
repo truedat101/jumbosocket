@@ -195,3 +195,4 @@ TODO: Add links
 * socket.io - Guillermo Rauch
 * Javascript - Brendan Eich
 * Grunt.js - For making Make for JS
+* Tatsumaki (perl/plack) for initial inspirations
