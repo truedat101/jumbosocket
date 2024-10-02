@@ -1,7 +1,7 @@
 {
   "name": "js.js",
   "description": "Jumbosocket (js.js) is a small server for big ideas, offering a small template starter project, inspired by fu.js and utilizing socket.io",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "homepage": "https://github.com/truedat101/jumbosocket",
   "repository": {
     "type": "git",
@@ -39,7 +39,6 @@
   "scripts": {
     "test": "mocha -R tap"
   },
-  "main": "./lib/js/index",
   "directories": {
     "lib": "./lib/js"
   },
