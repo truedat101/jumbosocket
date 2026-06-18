@@ -1,70 +1,61 @@
-/**
-#
-#Copyright (c) 2011-2024 Razortooth Communications, LLC. All rights reserved.
-#
-#Redistribution and use in source and binary forms, with or without modification,
-#are permitted provided that the following conditions are met:
-#
-#    * Redistributions of source code must retain the above copyright notice,
-#      this list of conditions and the following disclaimer.
-#
-#    * Redistributions in binary form must reproduce the above copyright notice,
-#      this list of conditions and the following disclaimer in the documentation
-#      and/or other materials provided with the distribution.
-#
-#    * Neither the name of Razortooth Communications, LLC, nor the names of its
-#      contributors may be used to endorse or promote products derived from this
-#      software without specific prior written permission.
-#
-#THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
-#ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-#WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-#DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
-#ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
-#(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-#LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
-#ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-#(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-#SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-**/
+// SPDX-License-Identifier: BSD-3-Clause
+//
+// Run from this directory:
+//   > node ./examplejs-server.js
+// then open http://localhost:8000/
+//
+// It serves the static assets in ./ and demonstrates Datastar over SSE:
+//   - a server-pushed clock (broadcast to every connected browser)
+//   - a shared counter button (@get('/increment') updates everyone live)
 
-//
-// Run this example from the local directory
-// 
-// > node ./examplejs-server.js
-//
-// It will look in ./ to find it's static assets
-// Not the best idea for production, but suitable for a sample
-//
-var JS =  require("../lib/js/js.js").JS,
-	util = require("util"),
-	url = require('url');
-var js = new JS();
-js.CONFIG.DOCROOT = './';
-console.log(js.CONFIG);
+import { JS } from '../index.js';
+
+const js = new JS();
+js.CONFIG.DOCROOT = import.meta.dirname; // serve assets next to this file
+
+let count = 0;
+
 js.create(js.address, js.CONFIG.HTTPWS_PORT);
+
+// Long-lived SSE stream. Datastar opens this via `data-init="@get('/stream')"`.
+js.get('/stream', (req, res) => {
+  const stream = js.sse(req, res);
+  // Send current state immediately so a fresh client isn't blank.
+  stream.patchElements(currentTime(), { selector: '#clock', mode: 'inner' });
+  stream.patchElements(String(count), { selector: '#count', mode: 'inner' });
+});
+
+// Button action: bump the shared counter and push it to every client.
+js.get('/increment', (req, res) => {
+  count += 1;
+  js.broadcastElements(String(count), { selector: '#count', mode: 'inner' });
+  res.writeHead(204).end(); // nothing to patch on the requesting connection
+});
+
+// A plain routed endpoint (exact match).
+js.get('/helloworld', (req, res) => res.simpleText(200, 'hello world'));
+
+// A regex route: /helloworldly/<anything-wordish>
+js.getterer('/helloworldly/[\\w.\\-]+', (req, res) => {
+  const route = new URL(req.url, 'http://localhost').pathname.split('/')[2];
+  res.simpleText(200, `helloworldly on route ${route}`);
+});
+
 js.listenHttpWS();
-js.listenSocketIO(js.js_handler); // This is initially set to null, so it will fallback to use js.DEFAULT_JS_HANDLER
 
-js.get("/helloworld", function(req, res) {
-        var body = 'hello world';
-        res.writeHead(200, {
-          'Content-Length': body.length,
-          'Content-Type': 'text/plain'
-        });
-        res.write(body);
-        res.end();
-});
+// One server-side timer broadcasts the clock to all clients — created once,
+// not per-connection, and cleared on shutdown (fixes the old timer leak).
+const clock = setInterval(() => {
+  js.broadcastElements(currentTime(), { selector: '#clock', mode: 'inner' });
+}, 1000);
 
-js.getterer("/helloworldly/[\\w\\.\\-]+", function(req, res) {
-        var route = url.parse(req.url).pathname.split('/')[2];
-        var body = 'helloworldy on route ' + route;
-        console.log('helloworldly');
-        res.writeHead(200, {
-          'Content-Length': body.length,
-          'Content-Type': 'text/plain'
-        });
-        res.write(body);
-        res.end();
-});
+function currentTime() {
+  return new Date().toLocaleTimeString();
+}
 
+function shutdown() {
+  clearInterval(clock);
+  js.close(() => process.exit(0));
+}
+process.on('SIGINT', shutdown);
+process.on('SIGTERM', shutdown);

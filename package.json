@@ -1,8 +1,13 @@
 {
   "name": "js.js",
-  "description": "Jumbosocket (js.js) is a small server for big ideas, offering a small template starter project, inspired by fu.js and utilizing socket.io",
+  "description": "Jumbosocket (js.js) is a small, dependency-free hypermedia server for big ideas: HTTP routing, static files, and first-class Datastar Server-Sent Events.",
   "version": "0.2.3",
   "homepage": "https://github.com/truedat101/jumbosocket",
+  "type": "module",
+  "main": "index.js",
+  "exports": {
+    ".": "./index.js"
+  },
   "repository": {
     "type": "git",
     "url": "git://github.com/truedat101/jumbosocket.git"
@@ -14,35 +19,34 @@
     "Fish - RIP",
     "Benny - RIP"
   ],
-  "dependencies": {
-    "socket.io": "^4.8.0"
-  },
+  "license": "BSD-3-Clause",
+  "dependencies": {},
   "devDependencies": {
-    "chai": ">=1.0.1",
-    "grunt": "^1.6.1",
-    "grunt-bump": "^0.8.0",
-    "grunt-contrib-concat": "^2.1.0",
-    "grunt-contrib-jshint": "^3.2.0",
-    "grunt-contrib-nodeunit": "^5.0.0",
-    "grunt-contrib-qunit": "^10.1.1",
-    "grunt-contrib-uglify": "^5.2.2",
-    "grunt-contrib-watch": "^1.1.0",
-    "grunt-karma": "^4.0.2",
-    "grunt-mocha-test": "^0.13.3",
-    "karma": "^6.4.4",
-    "karma-chrome-launcher": "^0.1.4",
-    "karma-jasmine": "^0.1.5",
-    "mocha": "^10.7.3",
-    "sandboxed-module": ">=0.1.3",
-    "sinon": ">=1.3.4"
+    "@eslint/js": "^9.39.0",
+    "eslint": "^9.39.0",
+    "eslint-config-prettier": "^9.1.2",
+    "globals": "^15.14.0",
+    "prettier": "^3.4.2"
   },
   "scripts": {
-    "test": "mocha -R tap"
+    "test": "node --test",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "start": "node examples/examplejs-server.js"
   },
-  "directories": {
-    "lib": "./lib/js"
-  },
+  "files": [
+    "index.js",
+    "lib/"
+  ],
+  "keywords": [
+    "datastar",
+    "hypermedia",
+    "sse",
+    "server-sent-events",
+    "http",
+    "server"
+  ],
   "engines": {
-    "node": "^20.0.0"
+    "node": ">=24"
   }
 }
